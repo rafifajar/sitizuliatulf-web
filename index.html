@@ -779,29 +779,42 @@
         </div>
         <div class="pv-project-text">
         <div class="pv-label">Project 03</div>
-        <h2 class="pv-project-title reveal">Project title goes here</h2>
-        <p class="pv-text reveal">Add a short summary of the problem and the context of this project.</p>
-        <p class="pv-text reveal">Describe your role and the approach you took, in one or two sentences.</p>
+        <h2 class="pv-project-title reveal">Revamping Shipment Booking</h2>
+        <div class="pv-meta-label pv-worked p3-sec">Overview</div>
+        <p class="pv-text reveal">Shipment booking at Lion Parcel supports both domestic and international shipments through a single booking form. The existing flow created two main challenges:</p>
+        <ul class="pv-text reveal" style="margin:0 0 20px; padding-left:20px;">
+          <li><strong>Repetitive data entry</strong> &mdash; Agents and POS handling regular senders had to re-enter the same sender information for every booking.</li>
+          <li><strong>Unclear international requirements</strong> &mdash; New agents and POS staff needed to understand additional information required based on the destination country and customs requirements.</li>
+        </ul>
+        <p class="pv-text reveal">These challenges made the booking process slower and increased the risk of missing or incomplete information.</p>
+        <div class="pv-meta-label pv-worked p3-sec">Root-cause Analysis</div>
+        <p class="p3-sub reveal">Identifying Friction in the Existing Booking Flow</p>
+        <p class="pv-text reveal">I looked at the booking experience from two perspectives:</p>
+        <div class="p3-rc reveal">
+          <div class="p3-rc-item"><span class="p3-rc-n">01</span><div><strong>Recurring Bookings</strong><p>How can we reduce the amount of information agents need to enter repeatedly?</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">02</span><div><strong>International Shipments</strong><p>How can we help agents understand what information is required without having to remember every requirement?</p></div></div>
+        </div>
         <div class="pv-sticky">
           <div class="pv-meta-label pv-worked">What I worked on</div>
           <ol class="pv-stepper">
             <li class="pv-step active" data-go="1">
-              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Focus area one</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Reduce Repetitive Input</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Enabled agents to save and reuse complete sender and shipment details for recurring bookings.</p></div></div>
             </li>
             <li class="pv-step" data-go="2">
-              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Focus area two</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Clarify Shipment Requirements</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Separated domestic and international forms to make the shipment context and required information more visible.</p></div></div>
             </li>
             <li class="pv-step" data-go="3">
-              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Focus area three</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Speed Up Form Completion</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Reworked the sender and recipient layout and simplified address input for easier copy-paste from sources like WhatsApp.</p></div></div>
             </li>
           </ol>
           <div class="pv-impact reveal">
             <div class="pv-worked">Impact</div>
-            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add an impact metric or outcome here</strong></div>
-            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add another impact metric or outcome here</strong></div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>30% Faster Recurring Bookings</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>25% Clearer Shipment Requirements</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>20% Faster Address Input</div>
           </div>
         </div>
       </div>
@@ -876,18 +889,24 @@
           <div class="pv-meta-label pv-worked">What I worked on</div>
           <ol class="pv-stepper">
             <li class="pv-step active" data-go="1">
-              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Reuse Booking Data</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Enabled agents to save and reuse complete sender and shipment details for recurring bookings, reducing repetitive data entry.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Reduce Repetitive Input</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Enabled agents to save and reuse complete sender and shipment details for recurring bookings.</p></div></div>
             </li>
             <li class="pv-step" data-go="2">
-              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Clearer Domestic &amp; International Flow</span></div>
+              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Clarify Shipment Requirements</span></div>
               <div class="pv-step-body"><div><p class="pv-step-desc">Separated domestic and international forms to make the shipment context and required information more visible.</p></div></div>
             </li>
             <li class="pv-step" data-go="3">
-              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Faster Form Completion</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Reworked the sender and recipient layout and simplified address copy-paste to help agents complete bookings faster.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Speed Up Form Completion</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Reworked the sender and recipient layout and simplified address input for easier copy-paste from sources like WhatsApp.</p></div></div>
             </li>
           </ol>
+          <div class="pv-impact reveal">
+            <div class="pv-worked">Impact</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>30% Faster Recurring Bookings</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>25% Clearer Shipment Requirements</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>20% Faster Address Input</div>
+          </div>
         </div>
       </div>
       <div class="pv-project-media">
