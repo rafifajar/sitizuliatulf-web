@@ -210,6 +210,10 @@
   .pv-impact-ic{flex-shrink:0; width:28px; height:28px; border:1.5px solid #d3d3cf; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#b3b3ae; font-size:13px; line-height:1;}
   .pv-project{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:64px; margin-top:120px; margin-bottom:120px; align-items:stretch; padding:0 100px;}
   .pv-project-text{padding-left:60px;}
+  .to-top{position:fixed; right:24px; bottom:24px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 12px 28px -8px rgba(255,90,45,.55); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
+  .to-top.show{opacity:1; transform:none; pointer-events:auto;}
+  .to-top:hover{transform:translateY(-3px);}
+  @media (max-width:560px){ .to-top{right:16px; bottom:16px; width:46px; height:46px;} }
   .pv-sticky{position:sticky; top:110px;}
   #project2View .pv-project, #project3View .pv-project{padding:0;}
   #project2View .pv-project-text, #project3View .pv-project-text{padding-left:0;}
@@ -1435,6 +1439,22 @@
       } else { done(legacyCopy()); }
     });
   })();
+</script>
+<button type="button" class="to-top" id="toTop" aria-label="Back to top"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+<script>
+(function(){
+  var btn = document.getElementById('toTop');
+  if(!btn) return;
+  function check(){
+    var nearBottom = window.scrollY > 400 && (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 320);
+    btn.classList.toggle('show', nearBottom);
+  }
+  window.addEventListener('scroll', check, {passive:true});
+  window.addEventListener('resize', check);
+  window.addEventListener('hashchange', function(){ setTimeout(check, 100); });
+  btn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+  check();
+})();
 </script>
 </body>
 </html>
