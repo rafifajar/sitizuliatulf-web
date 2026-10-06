@@ -414,8 +414,6 @@
   .p3-rc-n{flex-shrink:0; width:36px; height:36px; border-radius:50%; background:#fff2ea; color:var(--accent); font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;}
   .p3-rc-item strong{display:block; font-size:17px; font-weight:800; color:var(--ink);}
   .p3-rc-item p{margin:6px 0 0; font-size:16px; line-height:1.6; color:var(--muted);}
-  /* Project 2 card (no detail page yet: no lift on hover) */
-  .pt2.project-showcase:hover{transform:none;}
   .pt2-panel{position:relative; min-width:0; border-radius:18px; background:radial-gradient(ellipse 54% 62% at 50% 54%, rgba(255,90,45,.08), transparent 72%), #F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy{flex:1 1 0; min-height:0; border-radius:18px; background:#F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy + .pt2-dummy{margin-top:18px;}
@@ -561,7 +559,14 @@
       </div>
     </a>
 
-    <div class="project-showcase pt2">
+    <a href="#project-2" class="project-showcase">
+      <div class="showcase-visual pt-visual">
+        <div class="showcase-overlay">
+          <div class="vp-circle">
+            <span class="vp-line">View <span class="vp-arrow">↗</span></span>
+            <span class="vp-line">Project</span>
+          </div>
+        </div>
       <div class="pt-head">
         <div class="pt-head-main">
           <div class="pt-eyebrow"><span class="pt-num">02</span><span class="pt-lab">AI product</span><i class="pt-line"></i></div>
@@ -580,7 +585,8 @@
           <div class="pt2-dummy"><span class="pt2-ph">Dummy image</span></div>
         </div>
       </div>
-    </div>
+      </div>
+    </a>
 
     <a href="#project-3" class="project-showcase">
       <div class="showcase-visual pt-visual">
@@ -864,6 +870,100 @@
   </section>
 </div>
 
+<div id="project2View" class="project-view" style="display:none;">
+  <div class="pv-topbar wrap"><a href="#top" class="back-link">&larr; Back</a></div>
+  <div class="wrap">
+    <div class="pv-label">DesktopIP</div>
+    <h1 class="pv-title">Project title goes here</h1>
+    <div class="pv-grid">
+      <div class="pv-col-main">
+        <div class="pv-meta-label">Background</div>
+        <p class="pv-text">Add a short description of the company and the AI product you worked on here.</p>
+        <p class="pv-text pv-gap">Describe your role and the kind of work you did across this product.</p>
+      </div>
+      <div class="pv-col-side">
+        <div class="pv-block"><div class="pv-meta-label">Scope</div><div class="pv-text">Product Designer</div></div>
+        <div class="pv-block"><div class="pv-meta-label">Industry</div><div class="pv-text">AI</div></div>
+        <div class="pv-block"><div class="pv-meta-label">Timeline</div><div class="pv-text">20XX</div></div>
+      </div>
+    </div>
+    <div class="pv-project" style="margin-bottom:200px;">
+      <div class="pv-project-text">
+        <div class="pv-label">Project 01</div>
+        <h2 class="pv-project-title reveal">Project title goes here</h2>
+        <p class="pv-text reveal">Add a short summary of the problem and the context of this project.</p>
+        <p class="pv-text reveal">Describe your role and the approach you took, in one or two sentences.</p>
+        <div class="pv-sticky">
+          <div class="pv-meta-label pv-worked">What I worked on</div>
+          <ol class="pv-stepper">
+            <li class="pv-step active" data-go="1">
+              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Focus area one</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+            <li class="pv-step" data-go="2">
+              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Focus area two</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+            <li class="pv-step" data-go="3">
+              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Focus area three</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+          </ol>
+          <div class="pv-impact reveal">
+            <div class="pv-worked">Impact</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add an impact metric or outcome here</strong></div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add another impact metric or outcome here</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="pv-project-media">
+        <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:4/3;"><span>Dummy image 1</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:16/10;"><span>Dummy image 2</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:1/1;"><span>Dummy image 3</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:4/3;"><span>Dummy image 4</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="3" style="aspect-ratio:16/10;"><span>Dummy image 5</span></div>
+      </div>
+    </div>
+    <div class="pv-project" style="margin-bottom:200px;">
+      <div class="pv-project-text">
+        <div class="pv-label">Project 02</div>
+        <h2 class="pv-project-title reveal">Project title goes here</h2>
+        <p class="pv-text reveal">Add a short summary of the problem and the context of this project.</p>
+        <p class="pv-text reveal">Describe your role and the approach you took, in one or two sentences.</p>
+        <div class="pv-sticky">
+          <div class="pv-meta-label pv-worked">What I worked on</div>
+          <ol class="pv-stepper">
+            <li class="pv-step active" data-go="1">
+              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Focus area one</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+            <li class="pv-step" data-go="2">
+              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Focus area two</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+            <li class="pv-step" data-go="3">
+              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Focus area three</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Describe what you worked on in this step and why it mattered.</p></div></div>
+            </li>
+          </ol>
+          <div class="pv-impact reveal">
+            <div class="pv-worked">Impact</div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add an impact metric or outcome here</strong></div>
+            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span><strong>Add another impact metric or outcome here</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="pv-project-media">
+        <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:4/3;"><span>Dummy image 6</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:16/10;"><span>Dummy image 7</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:1/1;"><span>Dummy image 8</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:4/3;"><span>Dummy image 9</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="3" style="aspect-ratio:16/10;"><span>Dummy image 10</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="project3View" class="project3-view" style="display:none;">
   <div class="pv-topbar wrap"><a href="#top" class="back-link">&larr; Back</a></div>
   <div class="wrap">
@@ -957,19 +1057,21 @@
   var projectView = document.getElementById('projectView');
   var experienceView = document.getElementById('experienceView');
   var project3View = document.getElementById('project3View');
+  var project2View = document.getElementById('project2View');
   var navWork = document.querySelector('.tn-item[href="#work"]'), navExp = document.querySelector('.tn-item[href="#experience"]');
   function setNav(isExp){
     if(navWork){ navWork.classList.toggle('active', !isExp); if(isExp){ navWork.removeAttribute('aria-current'); } else { navWork.setAttribute('aria-current', 'page'); } }
     if(navExp){ navExp.classList.toggle('active', isExp); if(isExp){ navExp.setAttribute('aria-current', 'page'); } else { navExp.removeAttribute('aria-current'); } }
   }
   function route(){
-    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3';
-    homeView.style.display = (isProject || isExp || isP3) ? 'none' : '';
+    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3', isP2 = hash === '#project-2';
+    homeView.style.display = (isProject || isExp || isP3 || isP2) ? 'none' : '';
     projectView.style.display = isProject ? '' : 'none';
     if(experienceView){ experienceView.style.display = isExp ? '' : 'none'; }
     if(project3View){ project3View.style.display = isP3 ? '' : 'none'; }
+    if(project2View){ project2View.style.display = isP2 ? '' : 'none'; }
     setNav(isExp);
-    if(isProject || isExp || isP3){
+    if(isProject || isExp || isP3 || isP2){
       window.scrollTo(0,0);
     } else {
       var id = location.hash.slice(1);
