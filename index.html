@@ -1012,7 +1012,17 @@
     if(current === null){ current = parseInt(group.shots[0].getAttribute('data-step'), 10); }
     setStepForGroup(group, current);
   }
+  function alignMedia(){
+    stepGroups.forEach(function(group, idx){
+      var media = medias[idx], sticky = steppers[idx].closest('.pv-sticky');
+      if(!media || !sticky || !isShown(media)) return;
+      var col = sticky.parentNode, prev = sticky.previousElementSibling, offset = 0;
+      if(window.innerWidth > 720 && prev){ offset = prev.getBoundingClientRect().bottom - col.getBoundingClientRect().top; }
+      media.style.marginTop = offset > 450 ? (offset - 40) + 'px' : '';
+    });
+  }
   function updateStep(){
+    alignMedia();
     stepGroups.forEach(updateGroup);
   }
   window.addEventListener('scroll', updateStep, {passive:true});
