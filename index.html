@@ -167,7 +167,8 @@
 
   .project-view{position:relative; z-index:1; padding:0 0 110px;}
   .pv-topbar{padding-top:28px; padding-bottom:20px;}
-  .pv-topbar .back-link{margin-bottom:0;}
+  .pv-topbar{position:sticky; top:0; z-index:50; padding-top:20px; padding-bottom:12px; pointer-events:none;}
+  .pv-topbar .back-link{margin-bottom:0; pointer-events:auto; padding:9px 16px; border-radius:100px; background:rgba(255,255,255,.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:0 6px 20px -8px rgba(23,21,18,.25);}
   .pv-banner{display:block; width:100%; max-width:1440px; height:auto; margin:0 auto;}
   .pv-banner + .wrap{padding-top:56px;}
   .back-link{display:inline-block; font-size:14px; font-weight:600; color:var(--muted); margin-bottom:48px; transition:color .2s ease;}
@@ -210,10 +211,10 @@
   .pv-impact-ic{flex-shrink:0; width:28px; height:28px; border:1.5px solid #d3d3cf; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#b3b3ae; font-size:13px; line-height:1;}
   .pv-project{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:64px; margin-top:120px; margin-bottom:120px; align-items:stretch; padding:0 100px;}
   .pv-project-text{padding-left:60px;}
-  .to-top{position:fixed; right:24px; bottom:24px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 12px 28px -8px rgba(255,90,45,.55); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
+  .to-top{position:fixed; right:24px; bottom:88px; z-index:60; width:52px; height:52px; border-radius:50%; border:none; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 12px 28px -8px rgba(255,90,45,.55); opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity .25s ease, transform .25s ease;}
   .to-top.show{opacity:1; transform:none; pointer-events:auto;}
   .to-top:hover{transform:translateY(-3px);}
-  @media (max-width:560px){ .to-top{right:16px; bottom:16px; width:46px; height:46px;} }
+  @media (max-width:560px){ .to-top{right:16px; bottom:80px; width:46px; height:46px;} }
   .pv-sticky{position:sticky; top:110px;}
   #project2View .pv-project, #project3View .pv-project{padding:0;}
   #project2View .pv-project-text, #project3View .pv-project-text{padding-left:0;}
