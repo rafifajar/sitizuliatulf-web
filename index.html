@@ -1447,8 +1447,7 @@
   var btn = document.getElementById('toTop');
   if(!btn) return;
   function check(){
-    var nearBottom = window.scrollY > 400 && (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 320);
-    btn.classList.toggle('show', nearBottom);
+    btn.classList.toggle('show', window.scrollY > 300);
   }
   window.addEventListener('scroll', check, {passive:true});
   window.addEventListener('resize', check);
