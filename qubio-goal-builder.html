@@ -1,0 +1,531 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.controls { display: none !important; }
+</style></head><body>
+<title>Qubio Goal Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone prototype on a dark stage. Goals sheet -> splash -> question cards (book-flip between cards) -> generating -> error/refresh -> plan result.
+   Single committed look matching the user's screens: white UI, gray desk, paper card with rings, orange accent. */
+:root {
+  color-scheme: light;
+  --ground: #F1F4FB; --phone: #ffffff; --ink: #14131a; --muted: #66708a; --faint: #a8adb9;
+  --orange: #f26a0d; --orange-soft: #ffeadb; --line: #e3e5ea; --soft: #f3f5f8; --desk: #eeeef0;
+  --primary: #111827; --red: #e0321f;
+  --stage-text: #5f6472; --stage-btn: #ffffff; --stage-btn-line: #dfe2e8;
+  --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--ground); color: var(--stage-text); font-family: var(--font); display: grid; place-items: center; padding-block: 14px; padding-inline: 14px; box-sizing: border-box; }
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
+.phone-wrap { position: relative; flex: none; }
+.phone { position: absolute; left: 0; top: 0; width: 375px; height: 812px; transform-origin: top left; background: var(--phone); color: var(--ink); overflow: hidden; border-radius: 44px; box-shadow: 0 0 0 1px #e3e7f0, 0 8px 20px -14px rgba(23,21,18,.16); }
+.status { position: absolute; z-index: 70; top: 0; left: 0; right: 0; height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 6px 24px 0; box-sizing: border-box; font-size: 13px; font-weight: 600; background: transparent; pointer-events: none; }
+.status .icons { display: flex; gap: 5px; align-items: center; }
+.status svg { display: block; }
+.home { position: absolute; z-index: 80; bottom: 7px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+
+.scr { position: absolute; inset: 0; background: var(--phone); transition: opacity .45s ease; }
+.scr.off { opacity: 0; pointer-events: none; }
+
+/* robot */
+.robot svg { display: block; width: 100%; height: 100%; }
+.robot .head { animation: float 3.4s ease-in-out infinite; }
+.robot .shadow { height: 6px; margin: 8px auto 0; border-radius: 50%; background: #14131a; opacity: .12; animation: shadow 3.4s ease-in-out infinite; }
+.robot.flat .head { animation: none; } .robot.flat .shadow { display: none; }
+.eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; transition: opacity .25s; }
+.sad { opacity: 0; transition: opacity .25s; }
+.robot.crying .eyes { opacity: 0; animation: none; }
+.robot.crying .sad { opacity: 1; }
+.robot.crying .tear { transform-box: fill-box; transform-origin: top; animation: tear 1.6s ease-in infinite; }
+
+/* 1. goals + sheet */
+.g-top { padding: 52px 16px 0; }
+.g-top .row { display: flex; justify-content: space-between; align-items: center; }
+.g-top h1 { margin: 0; font-size: 22px; font-weight: 700; }
+.g-tabs { display: flex; gap: 10px; margin-top: 18px; }
+.g-tabs span { padding: 7px 14px; border-radius: 99px; font-size: 11px; color: var(--muted); }
+.g-tabs span.on { background: var(--ink); color: #fff; }
+.g-dim { position: absolute; inset: 0; background: rgba(20,19,26,.45); opacity: 0; transition: opacity .35s; }
+.g-dim.on { opacity: 1; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; top: 150px; background: var(--phone); border-radius: 16px 16px 0 0; padding: 10px 14px 30px; transform: translateY(100%); transition: transform .45s cubic-bezier(.3,.7,.2,1); overflow: hidden; }
+.sheet.on { transform: none; }
+.sheet .grab { width: 36px; height: 4px; border-radius: 2px; background: #d6d9e0; margin: 0 auto; }
+.sheet h2 { margin: 18px 0 0; font-size: 13.5px; font-weight: 600; }
+.ai { display: flex; align-items: center; gap: 8px; margin-top: 20px; font-size: 13px; font-weight: 600; }
+.ai .av { width: 18px; height: 18px; }
+.sheet .sub { margin: 6px 0 0; font-size: 11px; color: var(--muted); }
+.cats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.cat { position: relative; height: 66px; border-radius: 6px; padding: 10px; box-sizing: border-box; overflow: hidden; transition: transform .15s; background-image: radial-gradient(rgba(20,19,26,.05) 1px, transparent 1px); background-size: 6px 6px; }
+.cat b { display: block; font-size: 10.5px; font-weight: 600; position: relative; }
+.cat small { display: block; margin-top: 3px; font-size: 9px; color: var(--muted); position: relative; }
+.cat .ill { position: absolute; right: -2px; bottom: -4px; width: 34px; height: 34px; }
+.cat.manual { background: #fff7ef; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.cat.manual b { color: var(--orange); }
+.plus { width: 18px; height: 18px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 14px; line-height: 1; }
+.cat.press { transform: scale(.95); }
+
+/* 2. splash */
+.splash { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 30px 40px; }
+.splash .robot { width: 70px; }
+.splash .robot .shadow { width: 42px; }
+.splash h1 { margin: 22px 0 0; font-size: 14.5px; font-weight: 600; }
+.splash p { margin: 10px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+.ldots { display: flex; gap: 6px; margin-top: 16px; }
+.ldots i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); animation: bounce 1s ease-in-out infinite; }
+.ldots i:nth-child(2) { animation-delay: .15s; } .ldots i:nth-child(3) { animation-delay: .3s; }
+.o { color: var(--orange); }
+
+/* 3. questions */
+.q-head { position: absolute; top: 44px; left: 0; right: 0; height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+.q-head b { flex: 1; font-size: 13.5px; font-weight: 600; }
+.q-head .close { color: var(--red); font-size: 12px; font-weight: 600; }
+.desk { position: absolute; z-index: 0; top: 96px; left: 0; right: 0; bottom: 74px; background: var(--desk); padding: 26px 18px 30px; box-sizing: border-box; }
+.deck { position: relative; height: 100%; perspective: 1400px; }
+.deck::before, .deck::after { content: ""; position: absolute; border-radius: 0 0 16px 16px; }
+.deck::before { left: 12px; right: 12px; bottom: -9px; height: 30px; background: #f6f6f8; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.deck::after { left: 26px; right: 26px; bottom: -17px; height: 30px; background: #e3e3e7; z-index: -1; }
+.paper { position: absolute; inset: 0; z-index: 1; background: var(--phone); border: 1px solid #f7dcc0; border-radius: 18px; padding: 26px 18px 0; box-sizing: border-box; transform-style: preserve-3d; backface-visibility: hidden; }
+.paper.hide { visibility: hidden; }
+.paper.out { animation: throwLeft .75s cubic-bezier(.45,0,.7,.5) forwards; box-shadow: 0 18px 40px rgba(20,19,26,.18); transform-origin: left center; z-index: 3; }
+.paper.in { animation: openRight .7s cubic-bezier(.2,.7,.25,1) both; transform-origin: right center; z-index: 2; }
+.ring { position: absolute; top: -17px; width: 14px; height: 34px; }
+.ring.l { left: 15px; } .ring.r { right: 15px; }
+.paper .robot { width: 64px; margin: 0 auto; }
+.paper .robot .shadow { width: 38px; }
+.hint { margin: 16px 0 0; font-size: 10.5px; color: var(--muted); }
+.paper h2 { margin: 6px 0 0; font-size: 14.5px; font-weight: 700; line-height: 1.4; }
+.inp { margin-top: 18px; padding: 8px 4px; border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--faint); min-height: 18px; transition: border-color .25s; }
+.inp.live { border-bottom-color: var(--orange); color: var(--ink); }
+.helper { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 10.5px; color: var(--muted); }
+.caret { display: inline-block; width: 1.5px; height: 14px; background: var(--orange); vertical-align: -2px; margin-left: 1px; animation: caret 1s steps(1) infinite; }
+.opts { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 6px; background: var(--soft); font-size: 12px; transition: background .2s; }
+.rd, .cb { flex: none; width: 16px; height: 16px; box-sizing: border-box; border: 1.5px solid #d3d7df; background: #fff; transition: all .2s; }
+.rd { border-radius: 50%; }
+.cb { border-radius: 4px; position: relative; }
+.opt.sel .rd { border: 5px solid var(--orange); box-shadow: 0 0 0 3px var(--orange-soft); }
+.opt.sel .cb { background: var(--orange); border-color: var(--orange); }
+.opt.sel .cb::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 1.8px 1.8px 0; transform: rotate(45deg); }
+.opt.other { background: none; border-bottom: 1px solid var(--line); border-radius: 0; align-items: flex-start; padding: 8px 12px 10px; }
+.opt.other.live { border-bottom-color: var(--orange); }
+.opt.other .ot { line-height: 1.45; color: var(--faint); }
+.opt.other.live .ot { color: var(--ink); }
+.opt.press { transform: scale(.98); }
+.q-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; padding: 12px 12px 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--phone); }
+.q-foot small { display: block; font-size: 10.5px; }
+.q-foot .bar { margin-top: 8px; width: 112px; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.q-foot .bar i { display: block; height: 100%; width: 0; background: var(--orange); transition: width .5s; }
+.btn { width: 104px; height: 36px; border: 0; border-radius: 5px; background: var(--primary); color: #fff; font: 600 12.5px var(--font); transition: background .25s, color .25s, transform .15s; }
+.btn.dis { background: #eef0f4; color: #b5bac5; }
+.btn.press { transform: scale(.94); }
+
+/* 4. generating */
+.gen { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 28px 60px; }
+.gen .robot { width: 64px; }
+.gen .robot .shadow { width: 38px; }
+.gen h1 { margin: 24px 0 0; font-size: 14px; font-weight: 600; text-align: center; }
+.steps { list-style: none; margin: 22px 0 0; padding: 0; width: 100%; display: flex; flex-direction: column; gap: 14px; }
+.steps li { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #c9cdd6; transition: color .3s; }
+.steps li.active, .steps li.done, .steps li.error { color: var(--ink); }
+.steps .ic { width: 15px; height: 15px; display: grid; place-items: center; }
+.steps .ic > * { display: none; }
+.steps li.active .spin { display: block; } .steps li.done .ok { display: block; } .steps li.error .warn { display: block; }
+.spin { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--orange); border-right-color: transparent; animation: spin .8s linear infinite; }
+.refresh { margin-top: 26px; display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; color: var(--orange); font: 500 13px var(--font); padding: 8px 14px; border-radius: 99px; transition: opacity .3s, background .2s; }
+.refresh.hid { opacity: 0; }
+.refresh.press { background: var(--orange-soft); }
+
+/* 5. result */
+.r-head { position: absolute; top: 44px; left: 0; right: 0; height: 52px; display: flex; align-items: center; padding: 0 16px; background: var(--phone); z-index: 3; }
+.r-scroll { position: absolute; top: 96px; left: 0; right: 0; bottom: 104px; background: var(--desk); overflow-y: auto; scrollbar-width: none; padding: 26px 18px 24px; box-sizing: border-box; }
+.r-scroll::-webkit-scrollbar { display: none; }
+.r-paper { position: relative; background: var(--phone); border: 1px solid #f7dcc0; border-radius: 18px; padding: 24px 18px 20px; }
+.chip { display: inline-block; padding: 3px 8px; border-radius: 4px; background: #eef1f6; font-size: 9.5px; color: var(--muted); }
+.r-paper h1 { margin: 10px 0 0; font-size: 16px; font-weight: 700; }
+.tip { margin: 12px 0 0; font-size: 11.5px; line-height: 1.55; color: var(--muted); }
+.r-paper ul { margin: 10px 0 0; padding-left: 18px; font-size: 11.5px; line-height: 1.55; }
+.r-paper li + li { margin-top: 6px; }
+.lbl { margin: 14px 0 0; font-size: 11.5px; font-weight: 600; }
+.r-paper .plain { margin: 6px 0 0; font-size: 11.5px; }
+.link { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 8px 10px; background: var(--soft); border-radius: 6px; font-size: 10.5px; }
+.link .g { width: 26px; height: 26px; border-radius: 4px; background: #e6e9ef; display: grid; place-items: center; }
+.link small { display: block; color: var(--muted); font-size: 9.5px; margin-top: 2px; }
+.ask { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 11.5px; font-weight: 600; }
+.ask .av { width: 18px; height: 18px; }
+.chg { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; font-weight: 500; }
+.hr { height: 1px; background: var(--line); margin: 18px 0 0; }
+.tasks { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 11.5px; }
+.week { margin: 16px 0 0; font-size: 11.5px; font-weight: 600; }
+.tl { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; margin-top: 12px; }
+.tl .dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #d3d7df; box-sizing: border-box; }
+.tl .dot.ok { border: 0; background: var(--orange); position: relative; }
+.tl .dot.ok::after { content: ""; position: absolute; left: 6px; top: 3px; width: 4px; height: 8px; border: solid #fff; border-width: 0 1.8px 1.8px 0; transform: rotate(45deg); }
+.tl .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 11px; line-height: 1.5; }
+.tl .card small { display: block; font-size: 9.5px; color: var(--muted); margin-bottom: 4px; }
+.tl .date { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 2px 6px; border-radius: 4px; background: #eef1f6; font-size: 9.5px; color: var(--muted); }
+
+.r-foot { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; padding: 12px 14px 26px; background: var(--phone); box-shadow: 0 -1px 0 var(--line); }
+.all { display: flex; align-items: center; gap: 8px; font-size: 11.5px; }
+.all .box { width: 16px; height: 16px; border-radius: 50%; background: var(--orange); position: relative; }
+.all .box::after { content: ""; position: absolute; left: 5.5px; top: 2.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 1.8px 1.8px 0; transform: rotate(45deg); }
+.r-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.r-btns button { height: 38px; width: auto; border-radius: 6px; font: 600 12px var(--font); transition: transform .15s; }
+.ghost { border: 1px solid var(--ink); background: var(--phone); color: var(--ink); }
+.r-btns .press { transform: scale(.95); }
+.tl + .tl { margin-top: 10px; }
+.tap { position: absolute; z-index: 90; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(20,19,26,.22); pointer-events: none; animation: tap .5s ease-out forwards; }
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.controls button:hover { border-color: #4a4468; }
+.controls .step { font-size: 12px; min-width: 120px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+@keyframes throwLeft {
+  0% { transform: none; }
+  40% { transform: translateX(-30%) rotateY(22deg) rotate(-4deg); }
+  100% { transform: translateX(-135%) rotateY(55deg) rotate(-12deg); }
+}
+@keyframes openRight {
+  0% { transform: rotateY(-80deg); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .12; } 50% { transform: scaleX(.85); opacity: .07; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes tear { 0% { transform: translateY(-2px) scale(.6); opacity: 0; } 25% { opacity: 1; transform: none; } 100% { transform: translateY(5px); opacity: 0; } }
+@keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .robot .head, .robot .shadow, .eyes { animation: none; }
+  .paper.out { animation: none; visibility: hidden; } .paper.in { animation: none; }
+}
+</style>
+
+<template id="robotTpl">
+  <div class="head">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <radialGradient id="rimG" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#eef2fb"/><stop offset=".55" stop-color="#a9b6d3"/><stop offset="1" stop-color="#5d6c93"/></radialGradient>
+        <radialGradient id="faceG" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#26294a"/><stop offset="1" stop-color="#0a0b18"/></radialGradient>
+        <linearGradient id="glowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc06a"/><stop offset="1" stop-color="#f26a0d"/></linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="47" fill="url(#rimG)"/>
+      <rect x="15" y="22" width="70" height="58" rx="27" fill="url(#faceG)"/>
+      <path d="M28 30c6-3.5 13-4.6 20-4.6" stroke="#ffffff" stroke-opacity=".16" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <g class="eyes"><ellipse cx="39" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/><ellipse cx="61" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/></g>
+      <g class="sad"><path d="M32 47l11 3.5M68 47l-11 3.5" stroke="#e9edf7" stroke-width="3.2" stroke-linecap="round" fill="none"/><path class="tear" d="M62 56c-2.6 3.6-3.9 6-3.9 7.6a3.9 3.9 0 0 0 7.8 0c0-1.6-1.3-4-3.9-7.6z" fill="#f6a24a"/></g>
+    </svg>
+  </div>
+  <div class="shadow"></div>
+</template>
+
+<div class="stage">
+  <div class="phone-wrap" id="phoneWrap"><div class="phone" id="phone" aria-label="Qubio goal builder prototype">
+    <div class="status">
+      <span>9:41</span>
+      <span class="icons" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#14131a"><rect x="0" y="7" width="3" height="4" rx=".8"/><rect x="4.6" y="5" width="3" height="6" rx=".8"/><rect x="9.2" y="2.5" width="3" height="8.5" rx=".8"/><rect x="13.8" y="0" width="3" height="11" rx=".8"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round"><path d="M1 3.8a9 9 0 0 1 13 0"/><path d="M3.3 6.3a5.6 5.6 0 0 1 8.4 0"/><circle cx="7.5" cy="9" r=".9" fill="#14131a" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="#14131a" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#14131a"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="#14131a" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    
+
+    <!-- 1. Goals + create sheet -->
+    <section class="scr" id="s-goals">
+      <div class="g-top">
+        <div class="row"><h1>Goals</h1><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 17 17"/></svg></div>
+        <div class="g-tabs"><span>All</span><span class="on">Personal</span><span>Circle</span></div>
+      </div>
+      <div class="g-dim" id="gdim"></div>
+      <div class="sheet" id="sheet">
+        <div class="grab"></div>
+        <h2>Create new goal</h2>
+        <div class="ai"><div class="av robot flat" data-robot></div>AI-recommended</div>
+        <p class="sub">Let's pick a category and turn it into a goal.</p>
+        <div class="cats"><div class="cat" data-cat="0" style="background:#f1ecfb"><b>Workout Schedule</b><small>Gym, yoga, cardio, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#b9a6ef" style="color:#b9a6ef"><rect x="6" y="14" width="22" height="8" rx="3" transform="rotate(-35 17 18)"/><rect x="2" y="14" width="8" height="14" rx="3" transform="rotate(-35 6 21)"/><rect x="24" y="4" width="8" height="14" rx="3" transform="rotate(-35 28 11)"/></svg></div><div class="cat" data-cat="1" style="background:#fdf1e4"><b>Study Plan</b><small>Exam, homework, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#f7c27a" style="color:#f7c27a"><rect x="4" y="18" width="28" height="7" rx="2"/><rect x="7" y="11" width="24" height="7" rx="2" opacity=".75"/><rect x="5" y="25" width="26" height="6" rx="2" opacity=".6"/></svg></div><div class="cat" data-cat="2" style="background:#e9f6ed"><b>Checklist</b><small>Routine, groceries, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#6ccf8e" style="color:#6ccf8e"><circle cx="18" cy="20" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="18" cy="20" r="7" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="18" cy="20" r="2.5"/></svg></div><div class="cat" data-cat="3" style="background:#e9f1fc"><b>Itinerary & Travel</b><small>Flight, destinations, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#8fb6ef" style="color:#8fb6ef"><rect x="4" y="10" width="18" height="22" rx="2"/><rect x="18" y="4" width="14" height="18" rx="2" opacity=".7"/><circle cx="13" cy="20" r="3" fill="#fff"/></svg></div><div class="cat" data-cat="4" style="background:#fdf7e3"><b>Cooking</b><small>Soups, noodles, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#f6cf4a" style="color:#f6cf4a"><rect x="5" y="14" width="26" height="20" rx="2"/><path d="M11 22c0-4 3-6 7-6s7 2 7 6v5H11z" fill="#fff"/></svg></div><div class="cat" data-cat="5" style="background:#fbedf5"><b>Skill Development</b><small>Creativity, teamwork, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#ef8fc2" style="color:#ef8fc2"><path d="M8 30c2-10 10-20 24-24-4 14-14 22-24 24z"/><circle cx="22" cy="14" r="3" fill="#fff"/></svg></div><div class="cat" data-cat="6" style="background:#f1f2f4"><b>Routine Activities</b><small>Studies, chores, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#c4c8d0" style="color:#c4c8d0"><rect x="4" y="10" width="28" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M4 17h28M10 22h4M16 22h4M22 22h4M10 27h4M16 27h4" stroke="currentColor" stroke-width="2.5"/></svg></div><div class="cat" data-cat="7" style="background:#fcefec"><b>Meal Plan</b><small>Breakfast, lunch, dinner, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#f29a86" style="color:#f29a86"><circle cx="18" cy="22" r="11"/><path d="M18 11c0-4 3-6 6-6" stroke="currentColor" stroke-width="2.5" fill="none"/></svg></div><div class="cat" data-cat="8" style="background:#eef0fc"><b>Financial Routine</b><small>Savings, debts, etc.</small><svg class="ill" viewBox="0 0 36 36" fill="#9aa4ef" style="color:#9aa4ef"><path d="M4 18 18 7l14 11v14H4z"/><rect x="14" y="22" width="8" height="10" fill="#fff"/></svg></div><div class="cat manual"><span class="plus">+</span><b>Create Manually</b></div></div>
+      </div>
+    </section>
+
+    <!-- 2. Splash -->
+    <section class="scr splash off" id="s-splash">
+      <div class="robot" data-robot></div>
+      <h1>Hi Margaret, I'm <span class="o">Qubio</span></h1>
+      <p>Set your goal with quick questions! Don't worry, your information is safe and stays private.</p>
+      <div class="ldots"><i></i><i></i><i></i></div>
+    </section>
+
+    <!-- 3. Questions -->
+    <section class="scr off" id="s-q">
+      <div class="q-head">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3M8 4 3 9l5 5"/></svg>
+        <b>Workout schedule</b><span class="close">Close</span>
+      </div>
+      <div class="desk"><div class="deck" id="deck">
+        <div class="paper" id="p0"><svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><div class="robot" data-robot></div>
+          <p class="hint">It's time to drop your answer</p><h2>May I know your weight?</h2>
+          <div class="inp" id="w">e.g. 50 kg</div>
+          <div class="helper"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#f26a0d" stroke-width="1.2"><circle cx="6" cy="6" r="5"/><path d="M6 5.5V8.5" stroke-linecap="round"/><circle cx="6" cy="3.7" r=".5" fill="#f26a0d"/></svg>Enter your current or target weight</div>
+        </div>
+        <div class="paper hide" id="p1"><svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><div class="robot" data-robot></div>
+          <p class="hint">Pick one that fits you best</p><h2>What's your height?</h2>
+          <div class="opts"><div class="opt" data-v="1"><span class="rd"></span>&lt;152 cm</div><div class="opt" data-v="2"><span class="rd"></span>152-163 cm</div><div class="opt" data-v="3"><span class="rd"></span>164-175 cm</div><div class="opt" data-v="4"><span class="rd"></span>176-183 cm</div><div class="opt" data-v="5"><span class="rd"></span>&gt; 183 cm</div></div>
+        </div>
+        <div class="paper hide" id="p2"><svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><div class="robot" data-robot></div>
+          <p class="hint">Pick as many as you want</p><h2>What types of exercises do you usually do?</h2>
+          <div class="opts"><div class="opt" data-v="1"><span class="cb"></span>Walking / Jogging / Running</div><div class="opt" data-v="2"><span class="cb"></span>Cycling / Swimming</div><div class="opt" data-v="3"><span class="cb"></span>Strength training / HIIT</div><div class="opt" data-v="4"><span class="cb"></span>Yoga / Pilates</div><div class="opt other" id="other"><span class="cb"></span><span class="ot" id="ot">Others, type here...</span></div></div>
+        </div>
+        <div class="paper hide" id="p3"><svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><div class="robot" data-robot></div>
+          <p class="hint">Pick one that fits you</p><h2>What is the duration target for your workout routine?</h2>
+          <div class="opts"><div class="opt" data-v="1"><span class="rd"></span>1 Week</div><div class="opt" data-v="2"><span class="rd"></span>2 Weeks</div><div class="opt" data-v="3"><span class="rd"></span>1 Month</div><div class="opt" data-v="4"><span class="rd"></span>3 Month</div></div>
+        </div>
+      </div></div>
+      <div class="q-foot">
+        <div><small id="qcount">1 out of 12 questions</small><div class="bar"><i id="qbar"></i></div></div>
+        <button class="btn dis" id="qbtn" type="button" tabindex="-1">Next</button>
+      </div>
+    </section>
+
+    <!-- 4. Generating -->
+    <section class="scr gen off" id="s-gen">
+      <div class="robot" id="genRobot" data-robot></div>
+      <h1 id="genTitle">Creating your personalized goal plan...</h1>
+      <ul class="steps" id="steps">
+        <li>Evaluating your answers and selections<span class="ic"></span></li>
+        <li>Matching data to your choices<span class="ic"></span></li>
+        <li>Generating a plan that fits you<span class="ic"></span></li>
+      </ul>
+      <button class="refresh hid" id="refresh" type="button" tabindex="-1"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 6.5A5.6 5.6 0 0 0 3.2 5"/><path d="M3 2v3.2h3.2"/><path d="M2.5 9.5A5.6 5.6 0 0 0 12.8 11"/><path d="M13 14v-3.2H9.8"/></svg>Refresh</button>
+    </section>
+
+    <!-- 5. Result -->
+    <section class="scr off" id="s-res">
+      <div class="r-head"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3M8 4 3 9l5 5"/></svg></div>
+      <div class="r-scroll" id="rscroll">
+        <div class="r-paper"><svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg><svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg>
+          <span class="chip">Workout schedule</span>
+          <h1>Morning Workout Plan</h1>
+          <p class="tip">Qubio Tips: Build an energizing and efficient workout routine.</p>
+          <ul><li><b>Goals:</b> Boost energy and maximize efficiency to stay fit and active every day.</li><li><b>Motivation:</b> Stay fit and improve health without wasting time.</li></ul>
+          <p class="lbl">Resource:</p><p class="plain">www.youtube.com</p>
+          <div class="link"><span class="g"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.3"><circle cx="7" cy="7" r="5.5"/><path d="M1.5 7h11M7 1.5c2 2.2 2 8.8 0 11M7 1.5c-2 2.2-2 8.8 0 11"/></svg></span><div>Good Morning Workout<small>youtube.com</small></div></div>
+          <div class="ask"><div class="av robot flat" data-robot></div>Do you need some changes?</div>
+          <span class="chg"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.3" stroke-linejoin="round"><path d="M9.5 2 12 4.5 5 11.5 2 12l.5-3z"/></svg>Change Answer</span>
+          <div class="hr"></div>
+          <p class="lbl">Task</p>
+          <div class="tasks"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#14131a" stroke-width="1.4" stroke-linecap="round"><path d="m1.5 3.5 1 1 2-2M1.5 8.5l1 1 2-2M7 3.5h7.5M7 8.5h7.5M7 13h7.5"/></svg>40 tasks</div>
+          <p class="week">Week 1</p>
+<div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><p class="week">Week 2</p><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div><div class="tl"><span class="dot ok"></span><div class="card"><small>06:30 AM</small>Stay Hydrated: Minumlah cukup air setiap hari untuk menjaga kesehatan dan kelembutan kulitmu.<div><span class="date"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg>17 May 2025</span></div></div></div>
+        </div>
+      </div>
+      <div class="r-foot">
+        <label class="all"><span class="box"></span>Select All Tasks</label>
+        <div class="r-btns"><button class="ghost" id="regenTask" type="button" tabindex="-1">Regenerate Task</button><button class="btn" id="addGoal" type="button" tabindex="-1">Add as Goal</button></div>
+      </div>
+    </section>
+
+    <div class="home"></div>
+  </div></div>
+  <div class="controls">
+    <button type="button" id="restart">Ulangi</button>
+    <span class="step" id="lbl">Create new goal</span>
+    <button type="button" id="pause">Jeda</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var Q = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var tpl = $("robotTpl");
+  Q("[data-robot]").forEach(function (host, n) {
+    var node = tpl.content.cloneNode(true);
+    node.querySelectorAll("[id]").forEach(function (el) { el.id = el.id + n; });
+    node.querySelectorAll("[fill^='url(#']").forEach(function (el) { el.setAttribute("fill", el.getAttribute("fill").replace(/\)$/, n + ")")); });
+    host.appendChild(node);
+  });
+  var ICONS = '<span class="spin"></span><svg class="ok" width="15" height="15" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#f26a0d"/><path d="M4.6 8.2l2.3 2.2 4.5-4.6" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="warn" width="15" height="15" viewBox="0 0 16 16"><path d="M8 1.2 15.2 14H.8z" fill="#e0321f" stroke="#e0321f" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6v3.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.8" r=".95" fill="#fff"/></svg>';
+  Q("#steps .ic").forEach(function (ic) { ic.innerHTML = ICONS; });
+
+  var phone = $("phone"), lbl = $("lbl"), screens = ["s-goals", "s-splash", "s-q", "s-gen", "s-res"];
+  var papers = [$("p0"), $("p1"), $("p2"), $("p3")], qbtn = $("qbtn"), qcount = $("qcount"), qbar = $("qbar");
+  var steps = Q("#steps li"), genRobot = $("genRobot"), refresh = $("refresh"), rscroll = $("rscroll");
+
+  var token = 0, paused = false, CANCEL = {};
+  function wait(ms) {
+    var my = token, t = 0;
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        if (my !== token) return reject(CANCEL);
+        if (t >= ms) return resolve();
+        setTimeout(function () { if (!paused) t += 30; tick(); }, 30);
+      })();
+    });
+  }
+  function scrollTo(el, target, ms) {
+    var my = token, from = el.scrollTop, t = 0, last = performance.now();
+    return new Promise(function (resolve, reject) {
+      function frame(now) {
+        if (my !== token) return reject(CANCEL);
+        if (!paused) t += now - last; last = now;
+        var p = Math.min(1, t / ms), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        el.scrollTop = from + (target - from) * e;
+        if (p < 1) requestAnimationFrame(frame); else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function tapAt(el) {
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect(), k = p.width / phone.offsetWidth;
+    var d = document.createElement("span"); d.className = "tap";
+    d.style.left = ((r.left - p.left + r.width / 2) / k) + "px";
+    d.style.top = ((r.top - p.top + r.height / 2) / k) + "px";
+    phone.appendChild(d); setTimeout(function () { d.remove(); }, 600);
+  }
+  async function press(el) { tapAt(el); el.classList.add("press"); await wait(200); el.classList.remove("press"); }
+  function show(id) { screens.forEach(function (s) { $(s).classList.toggle("off", s !== id); }); }
+  function setFoot(n, label, enabled) {
+    qcount.textContent = n + " out of 12 questions";
+    qbar.style.width = (n / 12 * 100) + "%";
+    qbtn.textContent = label; qbtn.classList.toggle("dis", !enabled);
+  }
+  function typeInto(el, text, cls) {
+    el.classList.add(cls || "live"); el.innerHTML = "";
+    el.appendChild(document.createTextNode(text));
+    var c = document.createElement("span"); c.className = "caret"; el.appendChild(c);
+  }
+  async function typeText(el, text, speed, holder) {
+    for (var i = 1; i <= text.length; i++) { typeInto(holder || el, text.slice(0, i)); await wait(speed); }
+    var c = (holder || el).querySelector(".caret"); if (c) c.remove();
+  }
+  async function flip(from, to) {
+    var a = papers[from], b = papers[to];
+    a.classList.add("out");
+    await wait(220);
+    b.classList.remove("hide"); b.classList.add("in");
+    await wait(650);
+    a.classList.remove("out"); a.classList.add("hide");
+    b.classList.remove("in");
+  }
+
+  function reset() {
+    token++; paused = false; $("pause").textContent = "Jeda";
+    show("s-goals");
+    $("gdim").classList.remove("on"); $("sheet").classList.remove("on");
+    papers.forEach(function (p, i) { p.className = "paper" + (i ? " hide" : ""); });
+    var w = $("w"); w.className = "inp"; w.textContent = "e.g. 50 kg";
+    Q(".opt").forEach(function (o) { o.classList.remove("sel"); });
+    var ot = $("ot"); ot.textContent = "Others, type here..."; $("other").classList.remove("live");
+    setFoot(1, "Next", false);
+    steps.forEach(function (li) { li.className = ""; });
+    genRobot.className = "robot"; refresh.classList.add("hid");
+    $("genTitle").textContent = "Creating your personalized goal plan...";
+    rscroll.scrollTop = 0;
+    lbl.textContent = "Create new goal";
+  }
+  async function pick(sel) { var o = $("deck").querySelector(sel); await press(o); o.classList.add("sel"); }
+
+  async function run() {
+    reset();
+    try {
+      await wait(700);
+      $("gdim").classList.add("on"); $("sheet").classList.add("on");
+      await wait(2000);
+      await press(Q('.cat[data-cat="0"]')[0]);
+      await wait(250);
+      // splash
+      show("s-splash"); lbl.textContent = "Splash";
+      await wait(2600);
+      // Q1 weight
+      show("s-q"); lbl.textContent = "Question 1";
+      await wait(1300);
+      tapAt($("w")); await wait(250);
+      typeInto($("w"), ""); await wait(300);
+      await typeText($("w"), "58 kg", 130);
+      setFoot(1, "Next", true);
+      await wait(800);
+      await press(qbtn);
+      setFoot(2, "Next", false);
+      await flip(0, 1); lbl.textContent = "Question 2";
+      // Q2 height
+      await wait(1100);
+      await pick('#p1 .opt[data-v="3"]');
+      setFoot(2, "Next", true);
+      await wait(900);
+      await press(qbtn);
+      setFoot(3, "Next", false);
+      await flip(1, 2); lbl.textContent = "Question 3";
+      // Q3 exercises
+      await wait(1000);
+      await pick('#p2 .opt[data-v="3"]'); setFoot(3, "Next", true); await wait(450);
+      await pick('#p2 .opt[data-v="4"]'); await wait(450);
+      await press($("other")); $("other").classList.add("sel"); $("other").classList.add("live");
+      await wait(200);
+      await typeText(null, "Voli, Sepak bola, padel", 60, $("ot"));
+      await wait(900);
+      await press(qbtn);
+      setFoot(12, "Generate", false);
+      await flip(2, 3); lbl.textContent = "Question 12";
+      // Q12 duration
+      await wait(1100);
+      await pick('#p3 .opt[data-v="1"]');
+      setFoot(12, "Generate", true);
+      await wait(1000);
+      await press(qbtn);
+      // generating
+      show("s-gen"); lbl.textContent = "Generating";
+      await wait(700);
+      steps[0].className = "active"; await wait(1100); steps[0].className = "done";
+      steps[1].className = "active"; await wait(1100); steps[1].className = "done";
+      steps[2].className = "active"; await wait(1300);
+      // error
+      steps[2].className = "error"; genRobot.className = "robot crying";
+      $("genTitle").textContent = "Sorry, something went wrong";
+      refresh.classList.remove("hid"); lbl.textContent = "Error";
+      await wait(2200);
+      await press(refresh);
+      refresh.classList.add("hid"); genRobot.className = "robot";
+      $("genTitle").textContent = "Creating your personalized goal plan...";
+      steps[2].className = "active"; lbl.textContent = "Retry";
+      await wait(1400); steps[2].className = "done";
+      await wait(700);
+      // result
+      show("s-res"); lbl.textContent = "Result";
+      await wait(1800);
+      await scrollTo(rscroll, rscroll.scrollHeight - rscroll.clientHeight, 6000);
+      await wait(1400);
+      await press($("addGoal"));
+      await wait(900);
+      await scrollTo(rscroll, 0, 1100);
+      await wait(1500);
+      run();
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+  rscroll.addEventListener("wheel", function () { token++; lbl.textContent = "Manual"; }, { passive: true });
+  rscroll.addEventListener("touchstart", function () { token++; lbl.textContent = "Manual"; }, { passive: true });
+  $("restart").addEventListener("click", run);
+  $("pause").addEventListener("click", function () { paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda"; });
+  run();
+})();
+(function () {
+  var wrap = document.getElementById("phoneWrap"), ph = document.getElementById("phone");
+  function fit() {
+    var cs = getComputedStyle(document.body);
+    var padX = parseFloat(cs.paddingLeft) * 2, padY = parseFloat(cs.paddingTop) * 2;
+    var k = Math.min((window.innerHeight - padY) / 812, (window.innerWidth - padX) / 375, 1);
+    if (k < 0.2) k = 0.2;
+    ph.style.transform = "scale(" + k + ")";
+    wrap.style.width = (375 * k) + "px";
+    wrap.style.height = (812 * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+})();
+</script>
+
+</body></html>
