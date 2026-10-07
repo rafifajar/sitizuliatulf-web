@@ -7,8 +7,8 @@
 /* Layout: one phone prototype centered on a dark stage, screens swap in place (robot stays put, text and input change), controls underneath.
    Single committed look: white phone UI on a deep violet-black ground, matching the user's own screens. */
 :root {
-  color-scheme: dark;
-  --ground: #0b0912;
+  color-scheme: light;
+  --ground: #F1F4FB;
   --phone: #ffffff;
   --ink: #14131a;
   --muted: #5f6472;
@@ -16,9 +16,9 @@
   --orange-soft: #ffeadb;
   --line: #dfe2e8;
   --off: #c6cad4;
-  --stage-text: #b9b6c9;
-  --stage-btn: #1a1726;
-  --stage-btn-line: #2e2a40;
+  --stage-text: #5f6472;
+  --stage-btn: #ffffff;
+  --stage-btn-line: #dfe2e8;
   --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 html, body { height: 100%; }
@@ -37,13 +37,13 @@ body {
 .phone {
   position: relative;
   height: min(780px, calc(100dvh - 92px));
-  min-height: 560px;
+  min-height: 0;
   aspect-ratio: 375 / 780;
   max-width: 100%;
   background: var(--phone);
   color: var(--ink);
   overflow: hidden;
-  box-shadow: 0 0 0 1px #221e33, 0 30px 80px rgba(0,0,0,.55);
+  border-radius: 22px; box-shadow: 0 0 0 1px #e3e7f0, 0 18px 40px -18px rgba(23,21,18,.3);
 }
 
 .status { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 0; font-size: 13px; font-weight: 600; }
@@ -99,7 +99,7 @@ body {
 
 .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
 .controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
-.controls button:hover { border-color: #4a4468; }
+.controls button:hover { border-color: #b9bfd0; }
 .controls .step { font-size: 12px; font-variant-numeric: tabular-nums; min-width: 72px; text-align: center; }
 button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
