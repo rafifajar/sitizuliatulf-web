@@ -1,0 +1,462 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Qubio Dashboard Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone prototype on a dark stage. Screens: loading -> dashboard -> tour step 1 -> tour step 2 -> checklist, autoplayed.
+   Single committed look matching the user's screens: white phone UI, near-black primary buttons, orange accent. */
+:root {
+  color-scheme: light;
+  --ground: #F1F4FB;
+  --phone: #ffffff;
+  --ink: #14131a;
+  --muted: #5f6472;
+  --faint: #9aa0ad;
+  --orange: #f26a0d;
+  --orange-soft: #ffeadb;
+  --line: #e3e5ea;
+  --soft: #f3f4f7;
+  --primary: #111827;
+  --stage-text: #5f6472;
+  --stage-btn: #ffffff;
+  --stage-btn-line: #dfe2e8;
+  --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--ground); color: var(--stage-text); font-family: var(--font); display: grid; place-items: center; padding-block: 14px; padding-inline: 14px; box-sizing: border-box; }
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
+.phone-wrap { position: relative; flex: none; }
+.phone { position: absolute; left: 0; top: 0; width: 375px; height: 812px; transform-origin: top left; background: var(--phone); color: var(--ink); overflow: hidden; border-radius: 44px; box-shadow: 0 0 0 1px #e3e7f0, 0 18px 40px -18px rgba(23,21,18,.3); }
+.status { position: absolute; z-index: 30; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 0; font-size: 13px; font-weight: 600; pointer-events: none; }
+.status .icons { display: flex; gap: 5px; align-items: center; }
+.status svg { display: block; }
+.home { position: absolute; z-index: 31; bottom: 7px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+
+.screen { position: absolute; inset: 0; transition: opacity .5s ease, transform .5s cubic-bezier(.3,.7,.2,1); }
+.screen.out { opacity: 0; pointer-events: none; }
+#checklist.out { opacity: 1; transform: translateX(100%); }
+#dash.behind { transform: translateX(-25%); }
+
+/* robot */
+.robot svg { display: block; width: 100%; height: 100%; }
+.robot .head { animation: float 3.4s ease-in-out infinite; }
+.robot .shadow { height: 6px; margin: 8px auto 0; border-radius: 50%; background: #14131a; opacity: .13; animation: shadow 3.4s ease-in-out infinite; }
+.eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+.dots { opacity: 0; }
+.robot.thinking .eyes { opacity: 0; animation: none; }
+.robot.thinking .dots { opacity: 1; }
+.robot.thinking .dots circle { transform-box: fill-box; transform-origin: center; animation: bounce 1s ease-in-out infinite; }
+.robot.thinking .dots circle:nth-child(2) { animation-delay: .15s; }
+.robot.thinking .dots circle:nth-child(3) { animation-delay: .3s; }
+.robot.flat .head, .robot.flat .shadow { animation: none; }
+
+/* 1. loading */
+#loading { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 24px 40px; }
+#loading .robot { width: 80px; }
+#loading .robot .shadow { width: 48px; }
+#loading h1 { margin: 22px 0 0; font-size: 16px; font-weight: 600; }
+#loading p { margin: 10px 0 0; font-size: 13px; color: var(--ink); }
+
+/* 2. dashboard */
+.dash-scroll { position: absolute; inset: 0 0 64px; overflow: hidden; padding-top: 44px; }
+.dh { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0; }
+.dh h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.dh .acts { display: flex; gap: 18px; align-items: center; }
+.bell { position: relative; }
+.bell::after { content: ""; position: absolute; top: 0; right: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+.chip { display: inline-flex; align-items: center; gap: 6px; margin: 10px 16px 0; padding: 5px 10px; border-radius: 6px; background: var(--soft); font-size: 11px; font-weight: 500; }
+.tabs { display: flex; gap: 8px; padding: 18px 16px 14px; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.tab { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line); font-size: 11px; color: var(--ink); flex: none; }
+.tab.on { border-color: var(--orange); color: var(--orange); background: #fff8f3; }
+.sec { padding: 16px; }
+.sec + .sec { border-top: 6px solid var(--soft); }
+.sec-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.sec h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.sec .sub { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 99px; background: var(--primary); color: #fff; font-size: 11.5px; font-weight: 600; flex: none; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.mini { border: 1px solid var(--line); border-radius: 10px; padding: 12px 10px; min-width: 0; }
+.mini .ico { width: 24px; height: 24px; border-radius: 6px; background: var(--soft); display: grid; place-items: center; }
+.mini b { display: block; margin-top: 10px; font-size: 12px; font-weight: 500; line-height: 1.35; }
+.mini span { display: block; margin-top: 10px; font-size: 11px; color: var(--muted); }
+.mini span strong { color: var(--ink); font-weight: 600; font-size: 12px; margin-right: 4px; }
+.link { margin-top: 12px; color: var(--orange); font-size: 12.5px; font-weight: 600; }
+.illus { display: block; margin: 10px auto 0; width: 92px; height: 86px; }
+.help { position: relative; }
+.help .sub { padding-right: 40px; }
+.ask { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 8px 8px 10px; border: 1px solid var(--line); border-radius: 12px; font-size: 13px; color: var(--muted); }
+.ask .av { width: 24px; height: 24px; }
+.ask .grow { flex: 1; }
+.ask .sendb { width: 26px; height: 26px; border-radius: 50%; background: #cfd3dc; display: grid; place-items: center; }
+.help .floater { position: absolute; right: 12px; top: -6px; width: 58px; }
+.help .floater .shadow { display: none; }
+.status { transition: opacity .45s; }
+.phone.touring .status { opacity: .45; }
+.nav { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; padding-bottom: 8px; box-sizing: border-box; border-top: 1px solid var(--line); background: var(--phone); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; }
+.nav div { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 9.5px; color: var(--faint); }
+.nav div.on { color: var(--ink); font-weight: 600; }
+
+/* tour overlay */
+.dim { position: absolute; inset: 0; z-index: 20; background: rgba(20,19,26,.55); opacity: 0; transition: opacity .45s; pointer-events: none; }
+.dim.on { opacity: 1; }
+.tour { position: absolute; inset: 0; z-index: 21; pointer-events: none; }
+.tour .avatar { position: absolute; width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 0 3px rgba(255,255,255,.9); transform: scale(0); transition: transform .4s cubic-bezier(.2,.9,.3,1.4); }
+.tour.on .avatar { transform: scale(1); }
+.bubble { position: absolute; background: var(--phone); border-radius: 6px; padding: 12px 14px; font-size: 12px; font-weight: 600; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,.18); opacity: 0; transform: translateX(-8px); transition: opacity .35s .15s, transform .35s .15s; }
+.tour.on .bubble { opacity: 1; transform: none; }
+.tip { position: absolute; left: 24px; right: 34px; background: var(--phone); border-radius: 4px; padding: 16px 14px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; transform: translateY(14px); transition: opacity .4s .3s, transform .4s .3s; }
+.tour.on .tip { opacity: 1; transform: none; }
+.tip h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.tip p { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: #2a2c35; }
+.tip .row { display: flex; justify-content: flex-end; margin-top: 14px; }
+.btn { border: 0; border-radius: 4px; background: var(--primary); color: #fff; font: 600 12.5px var(--font); padding: 10px 0; width: 120px; transition: transform .15s, opacity .15s; }
+.btn.press { transform: scale(.94); opacity: .85; }
+.swap { transition: opacity .2s; }
+.swap.fade { opacity: 0; }
+
+/* 5. checklist */
+#checklist { background: var(--phone); z-index: 25; }
+.ch-head { position: absolute; top: 44px; left: 0; right: 0; display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+.ch-head b { flex: 1; font-size: 14px; font-weight: 600; }
+.ch-head .close { color: #e0321f; font-size: 12.5px; font-weight: 600; }
+.ch-body { position: absolute; z-index: 0; top: 96px; left: 0; right: 0; bottom: 74px; background: #eeeef0; padding: 26px 18px 30px; }
+.paper { position: relative; height: 100%; background: var(--phone); border: 1px solid #f7dcc0; border-radius: 18px; padding: 26px 18px 0; box-sizing: border-box; }
+.paper::before, .paper::after { content: ""; position: absolute; z-index: -1; border-radius: 0 0 16px 16px; background: #e4e4e7; }
+.paper::before { left: 12px; right: 12px; bottom: -9px; height: 30px; background: #f6f6f8; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.paper::after { left: 26px; right: 26px; bottom: -17px; height: 30px; background: #e3e3e7; }
+.ring { position: absolute; top: -17px; width: 14px; height: 34px; }
+.ring.l { left: 15px; } .ring.r { right: 15px; }
+.paper .robot { width: 84px; margin: 0 auto; }
+.paper .robot .shadow { width: 50px; }
+.paper .hint { margin: 18px 0 0; font-size: 11.5px; color: #66708a; }
+.paper h2 { margin: 6px 0 0; font-size: 15.5px; font-weight: 700; }
+.answer { margin-top: 20px; padding: 6px 4px 10px; border-bottom: 1px solid var(--line); font-size: 13.5px; line-height: 1.5; min-height: 40px; color: var(--faint); transition: border-color .25s; }
+.answer.live { border-bottom-color: var(--orange); color: var(--ink); }
+.caret { display: inline-block; width: 1.5px; height: 14px; background: var(--orange); vertical-align: -2px; margin-left: 1px; animation: caret 1s steps(1) infinite; }
+.ch-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 74px; padding: 12px 12px 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--phone); }
+.ch-foot small { display: block; font-size: 10.5px; }
+.ch-foot .bar { margin-top: 8px; width: 112px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.ch-foot .bar i { display: block; height: 100%; width: 0; background: var(--orange); transition: width .5s; }
+.gen { width: 98px; height: 34px; border: 0; border-radius: 5px; background: var(--primary); color: #fff; font: 600 12.5px var(--font); display: grid; place-items: center; transition: transform .15s, opacity .25s; }
+.gen.idle { opacity: .35; }
+.gen.press { transform: scale(.94); }
+.gen .sp { display: none; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; border-right-color: transparent; animation: spin .8s linear infinite; }
+.gen.busy .sp { display: block; }
+.gen.busy .lbl { display: none; }
+
+.tap { position: absolute; z-index: 40; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(20,19,26,.22); pointer-events: none; animation: tap .5s ease-out forwards; }
+
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.controls button:hover { border-color: #b9bfd0; }
+.controls .step { font-size: 12px; min-width: 96px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .13; } 50% { transform: scaleX(.85); opacity: .08; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .robot .head, .robot .shadow, .eyes { animation: none; } }
+</style>
+
+<template id="robotTpl">
+  <div class="head">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <radialGradient id="rimG" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#eef2fb"/><stop offset=".55" stop-color="#a9b6d3"/><stop offset="1" stop-color="#5d6c93"/></radialGradient>
+        <radialGradient id="faceG" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#26294a"/><stop offset="1" stop-color="#0a0b18"/></radialGradient>
+        <linearGradient id="glowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc06a"/><stop offset="1" stop-color="#f26a0d"/></linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="47" fill="url(#rimG)"/>
+      <rect x="15" y="22" width="70" height="58" rx="27" fill="url(#faceG)"/>
+      <path d="M28 30c6-3.5 13-4.6 20-4.6" stroke="#ffffff" stroke-opacity=".16" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <g class="eyes"><ellipse cx="39" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/><ellipse cx="61" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/></g>
+      <g class="dots"><circle cx="35" cy="54" r="5.4" fill="url(#glowG)"/><circle cx="50" cy="50" r="5.4" fill="url(#glowG)"/><circle cx="65" cy="54" r="5.4" fill="url(#glowG)"/></g>
+    </svg>
+  </div>
+  <div class="shadow"></div>
+</template>
+
+<div class="stage">
+  <div class="phone-wrap" id="phoneWrap"><div class="phone" id="phone" aria-label="Qubio dashboard tour prototype">
+    <div class="status">
+      <span>9:41</span>
+      <span class="icons" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#14131a"><rect x="0" y="7" width="3" height="4" rx=".8"/><rect x="4.6" y="5" width="3" height="6" rx=".8"/><rect x="9.2" y="2.5" width="3" height="8.5" rx=".8"/><rect x="13.8" y="0" width="3" height="11" rx=".8"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round"><path d="M1 3.8a9 9 0 0 1 13 0"/><path d="M3.3 6.3a5.6 5.6 0 0 1 8.4 0"/><circle cx="7.5" cy="9" r=".9" fill="#14131a" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="#14131a" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#14131a"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="#14131a" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <!-- 1. Loading -->
+    <section class="screen" id="loading">
+      <div class="robot thinking" data-robot></div>
+      <h1>Hold tight</h1>
+      <p>We're Setting Things Up Just for You!</p>
+    </section>
+
+    <!-- 2. Dashboard -->
+    <section class="screen out" id="dash">
+      <div class="dash-scroll">
+        <div class="dh">
+          <h1>Dashboard</h1>
+          <div class="acts">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 17 17"/></svg>
+            <span class="bell"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linejoin="round"><path d="M5 14V9a5 5 0 0 1 10 0v5l1.5 1.5h-13z"/><path d="M8.2 17.5a2 2 0 0 0 3.6 0" stroke-linecap="round"/></svg></span>
+          </div>
+        </div>
+        <span class="chip">Goal-focused <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#14131a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 4.5 3 3 3-3"/></svg></span>
+        <div class="tabs">
+          <span class="tab on"><svg width="13" height="13" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="#f26a0d"/><path d="M11.8 6.2 10 10 6.2 11.8 8 8z" fill="#fff"/></svg>Overview</span>
+          <span class="tab"><svg width="13" height="13" viewBox="0 0 14 14" fill="#14131a"><rect x="1" y="6" width="3" height="7" rx=".6"/><rect x="5.5" y="2" width="3" height="11" rx=".6"/><rect x="10" y="4" width="3" height="9" rx=".6"/></svg>Stats</span>
+          <span class="tab"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.4"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h3"/></svg>Recommendation</span>
+        </div>
+
+        <div class="sec">
+          <div class="sec-top">
+            <div><h2>Overview</h2><p class="sub">All incomplete goals you create.</p></div>
+            <span class="pill"><svg width="11" height="11" viewBox="0 0 12 12" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="M6 1.5v9M1.5 6h9"/></svg>Goal</span>
+          </div>
+          <div class="cards">
+            <div class="mini" id="nearCard"><div class="ico"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.4"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5"/><path d="M1.5 6h11M4.5 1v3M9.5 1v3" stroke-linecap="round"/></svg></div><b>Near due date</b><span><strong>0</strong>Goals</span></div>
+            <div class="mini"><div class="ico"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.4" stroke-linecap="round"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.4"/></svg></div><b>Past due date</b><span><strong>0</strong>Goals</span></div>
+            <div class="mini"><div class="ico"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.4"><rect x="1.5" y="2.5" width="9" height="9" rx="1.5"/><path d="M1.5 5.5h9M4 1v3M8 1v3" stroke-linecap="round"/><circle cx="10.5" cy="10.5" r="2.6" fill="#fff"/><path d="M10.5 9.3v1.3l.9.6" stroke-linecap="round"/></svg></div><b>Rarely open</b><span><strong>0</strong>Goals</span></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <h2>Ready to be productive?</h2>
+          <p class="sub" style="color:var(--orange);opacity:.85">Let's create goal and make progress!</p>
+          <div class="link">Create Goal</div>
+          <svg class="illus" viewBox="0 0 92 86" fill="none" stroke="#8d97ad" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="18" y="4" width="13" height="15" rx="1.5" fill="#eef1f7"/><path d="M21 9h7M21 12.5h5"/>
+            <rect x="62" y="6" width="12" height="14" rx="1.5" fill="#eef1f7"/><path d="M65 10l6 6M71 10l-6 6"/>
+            <rect x="8" y="26" width="11" height="13" rx="1.5" fill="#eef1f7"/><path d="M10.5 31h6M10.5 34h4"/>
+            <rect x="70" y="30" width="12" height="14" rx="1.5" fill="#eef1f7"/><path d="M73 35h6M73 38h4"/>
+            <circle cx="46" cy="30" r="7" fill="#fff"/><path d="M41 28c2-4 8-5 11 0" fill="#8d97ad"/>
+            <path d="M37 52c0-9 4-14 9-14s9 5 9 14" fill="#eef1f7"/>
+            <rect x="48" y="46" width="14" height="10" rx="1" transform="rotate(-18 55 51)" fill="#fff"/>
+            <path d="M40 54c-6 4-11 12-10 22M52 56c4 6 9 12 14 14M30 76l8 2M60 68l6 4"/>
+            <path d="M24 58c4-2 8-1 10 2"/><circle cx="20" cy="66" r="9"/>
+          </svg>
+        </div>
+
+        <div class="sec help">
+          <h2>Need help?</h2>
+          <p class="sub">Qubio is here to guide you every step of the way.</p>
+          <div class="ask"><div class="av robot flat" data-robot></div><span class="grow">Ask anything</span><span class="sendb"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M12.5 1.5 1.5 5.8l4 1.7 1.7 4z"/><path d="M5.5 7.5l7-6"/></svg></span></div>
+          <div class="floater robot" data-robot></div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="on"><svg width="18" height="18" viewBox="0 0 14 14" fill="#14131a"><rect x="1" y="6" width="3" height="7" rx=".6"/><rect x="5.5" y="2" width="3" height="11" rx=".6"/><rect x="10" y="4" width="3" height="9" rx=".6"/></svg>Dashboard</div>
+        <div><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="9" cy="9" r="7"/><circle cx="9" cy="9" r="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/></svg>Goals</div>
+        <div><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><path d="m6 9 2 2 4-4"/></svg>To-Do</div>
+        <div><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 2h7l3 3v11H4z"/><path d="M7 9h4M7 12h4"/></svg>Notes</div>
+        <div><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="2.5" width="5" height="5" rx="1"/><rect x="10.5" y="2.5" width="5" height="5" rx="1"/><rect x="2.5" y="10.5" width="5" height="5" rx="1"/><rect x="10.5" y="10.5" width="5" height="5" rx="1"/></svg>More</div>
+      </nav>
+
+      <div class="dim" id="dim"></div>
+      <div class="tour" id="tour">
+        <div class="avatar robot flat" id="tAvatar" data-robot></div>
+        <div class="bubble swap" id="tBubble">Hi Jaja, welcome to Qubiq</div>
+        <div class="tip" id="tTip">
+          <div class="swap" id="tBody">
+            <h3 id="tTitle">I'm ready to guide you</h3>
+            <p id="tText">We'll define your goal first, then make it easier to achieve.</p>
+          </div>
+          <div class="row"><button class="btn" id="tBtn" type="button" tabindex="-1">Next</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Checklist -->
+    <section class="screen out" id="checklist">
+      <div class="ch-head">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3M8 4 3 9l5 5"/></svg>
+        <b>Checklist</b><span class="close">Close</span>
+      </div>
+      <div class="ch-body">
+        <div class="paper">
+          <svg class="ring l" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg>
+          <svg class="ring r" viewBox="0 0 14 34" aria-hidden="true"><circle cx="7" cy="7" r="6.4" fill="#57483a"/><circle cx="7" cy="27" r="6.4" fill="#57483a"/><rect x="5" y="7" width="4" height="20" rx="2" fill="#f6c27e"/></svg>
+          <div class="robot" data-robot></div>
+          <p class="hint">It's time to drop your answer</p>
+          <h2>Checklist apa yang mau kamu buat?</h2>
+          <div class="answer" id="answer">Type your answer here...</div>
+        </div>
+      </div>
+      <div class="ch-foot">
+        <div><small>1 out of 1 questions</small><div class="bar"><i id="qbar"></i></div></div>
+        <button class="gen idle" id="gen" type="button" tabindex="-1"><span class="lbl">Generate</span><span class="sp"></span></button>
+      </div>
+    </section>
+
+    <div class="home"></div>
+  </div></div>
+
+  <div class="controls">
+    <button type="button" id="restart">Ulangi</button>
+    <span class="step" id="lbl">Loading</span>
+    <button type="button" id="pause">Jeda</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var tpl = $("robotTpl");
+  document.querySelectorAll("[data-robot]").forEach(function (host, n) {
+    var node = tpl.content.cloneNode(true);
+    node.querySelectorAll("[id]").forEach(function (el) { el.id = el.id + n; });
+    node.querySelectorAll("[fill^='url(#']").forEach(function (el) { el.setAttribute("fill", el.getAttribute("fill").replace(/\)$/, n + ")")); });
+    if (host.classList.contains("flat")) { var s = node.querySelector(".shadow"); s && s.remove(); }
+    host.appendChild(node);
+  });
+
+  var phone = $("phone"), loading = $("loading"), dash = $("dash"), checklist = $("checklist"),
+      dim = $("dim"), tour = $("tour"), av = $("tAvatar"), bubble = $("tBubble"), tip = $("tTip"),
+      tBody = $("tBody"), tTitle = $("tTitle"), tText = $("tText"), tBtn = $("tBtn"),
+      answer = $("answer"), gen = $("gen"), qbar = $("qbar"), lbl = $("lbl");
+  var ANSWER = "Belajar dasar bahasa Jepang (hiragana & katakana)";
+
+  var token = 0, paused = false, CANCEL = {};
+  function wait(ms) {
+    var my = token, t = 0;
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        if (my !== token) return reject(CANCEL);
+        if (t >= ms) return resolve();
+        setTimeout(function () { if (!paused) t += 30; tick(); }, 30);
+      })();
+    });
+  }
+  function tapAt(el) {
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect(), k = p.width / phone.offsetWidth;
+    var d = document.createElement("span"); d.className = "tap";
+    d.style.left = ((r.left - p.left + r.width / 2) / k) + "px";
+    d.style.top = ((r.top - p.top + r.height / 2) / k) + "px";
+    phone.appendChild(d);
+    setTimeout(function () { d.remove(); }, 600);
+  }
+  async function press(el) { tapAt(el); el.classList.add("press"); await wait(220); el.classList.remove("press"); }
+
+  // place the tour pieces against the "Near due date" card
+  function placeTour() {
+    var p = dash.getBoundingClientRect(), c = $("nearCard").getBoundingClientRect(), k = p.width / dash.offsetWidth;
+    var x = (c.left - p.left) / k, y = (c.top - p.top) / k, pw = p.width / k;
+    av.style.left = (x + 0) + "px"; av.style.top = (y + 8) + "px";
+    bubble.style.left = (x + 46) + "px"; bubble.style.top = (y + 10) + "px";
+    bubble.style.width = (pw - x - 46 - 34) + "px";
+    tip.style.top = (y + 66) + "px";
+  }
+  function setTour(step) {
+    if (step === 1) {
+      bubble.textContent = "Hi Jaja, welcome to Qubiq";
+      tTitle.textContent = "I'm ready to guide you";
+      tText.textContent = "We'll define your goal first, then make it easier to achieve.";
+      tBtn.textContent = "Next";
+    } else {
+      bubble.textContent = "Set your goal";
+      tTitle.textContent = "Let's start with your goal";
+      tText.textContent = "We'll make it simple to follow.";
+      tBtn.textContent = "Start Now";
+    }
+  }
+  function setAnswer(text, live) {
+    answer.classList.toggle("live", live);
+    if (!live) { answer.textContent = "Type your answer here..."; return; }
+    answer.textContent = text;
+    var c = document.createElement("span"); c.className = "caret"; answer.appendChild(c);
+  }
+
+  function reset() {
+    token++;
+    paused = false; $("pause").textContent = "Jeda";
+    loading.classList.remove("out");
+    dash.classList.add("out"); dash.classList.remove("behind");
+    checklist.classList.add("out");
+    dim.classList.remove("on"); tour.classList.remove("on"); phone.classList.remove("touring");
+    setTour(1);
+    setAnswer("", false);
+    gen.className = "gen idle"; qbar.style.width = "0";
+    lbl.textContent = "Loading";
+  }
+
+  async function run() {
+    reset();
+    try {
+      await wait(2600);
+      // 2. dashboard
+      loading.classList.add("out");
+      dash.classList.remove("out");
+      lbl.textContent = "Dashboard";
+      await wait(1800);
+
+      // 3. tour step 1
+      placeTour();
+      dim.classList.add("on"); phone.classList.add("touring");
+      tour.classList.add("on");
+      lbl.textContent = "Product Tour 1";
+      await wait(2800);
+      await press(tBtn);
+
+      // 4. tour step 2
+      bubble.classList.add("fade"); tBody.classList.add("fade");
+      await wait(200);
+      setTour(2);
+      bubble.classList.remove("fade"); tBody.classList.remove("fade");
+      lbl.textContent = "Product Tour 2";
+      await wait(2600);
+      await press(tBtn);
+
+      // 5. checklist
+      await wait(150);
+      checklist.classList.remove("out");
+      dash.classList.add("behind");
+      phone.classList.remove("touring");
+      lbl.textContent = "Checklist";
+      await wait(1500);
+      tapAt(answer);
+      await wait(250);
+      setAnswer("", true);
+      await wait(350);
+      for (var i = 1; i <= ANSWER.length; i++) { setAnswer(ANSWER.slice(0, i), true); await wait(42); }
+      qbar.style.width = "100%";
+      gen.classList.remove("idle");
+      await wait(900);
+      await press(gen);
+      gen.classList.add("busy");
+      lbl.textContent = "Generating";
+      await wait(2200);
+      run();
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+
+  window.addEventListener("resize", function () { if (tour.classList.contains("on")) placeTour(); });
+  $("restart").addEventListener("click", run);
+  $("pause").addEventListener("click", function () { paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda"; });
+  run();
+})();
+(function () {
+  var wrap = document.getElementById("phoneWrap"), ph = document.getElementById("phone"), ctr = document.querySelector(".controls");
+  function fit() {
+    var cs = getComputedStyle(document.body);
+    var padX = parseFloat(cs.paddingLeft) * 2, padY = parseFloat(cs.paddingTop) * 2;
+    var k = Math.min((window.innerHeight - padY - ctr.offsetHeight - 14) / 812, (window.innerWidth - padX) / 375, 1);
+    if (k < 0.2) k = 0.2;
+    ph.style.transform = "scale(" + k + ")";
+    wrap.style.width = (375 * k) + "px";
+    wrap.style.height = (812 * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+})();
+</script>
+
+</body></html>
