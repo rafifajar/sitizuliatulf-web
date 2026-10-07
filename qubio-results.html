@@ -1,0 +1,405 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Qubio Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone prototype on a dark stage. Screen A = analysis checklist (with error + refresh), screen B = scrollable result with sticky CTA.
+   Single committed look matching the user's screens: white phone UI, orange accent, status colors for scores. */
+:root {
+  color-scheme: light;
+  --ground: #F1F4FB;
+  --phone: #ffffff;
+  --ink: #14131a;
+  --muted: #5f6472;
+  --faint: #c3c7d1;
+  --orange: #f26a0d;
+  --orange-soft: #ffeadb;
+  --card: #f7f8fa;
+  --card-line: #eceef2;
+  --rule: #e6e8ed;
+  --green: #12b05a;
+  --blue: #2f7de1;
+  --red: #e0321f;
+  --stage-text: #5f6472;
+  --stage-btn: #ffffff;
+  --stage-btn-line: #dfe2e8;
+  --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--ground); color: var(--stage-text); font-family: var(--font); display: grid; place-items: center; padding-block: 14px; padding-inline: 14px; box-sizing: border-box; }
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
+
+.phone-wrap { position: relative; flex: none; }
+.phone { position: absolute; left: 0; top: 0; width: 375px; height: 780px; transform-origin: top left; background: var(--phone); color: var(--ink); overflow: hidden; border-radius: 44px; box-shadow: 0 0 0 1px #e3e7f0, 0 18px 40px -18px rgba(23,21,18,.3); }
+.status { position: absolute; z-index: 5; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 8px; font-size: 13px; font-weight: 600; background: var(--phone); }
+.status .icons { display: flex; gap: 5px; align-items: center; }
+.status svg { display: block; }
+.home { position: absolute; z-index: 6; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+
+.screen { position: absolute; inset: 0; transition: opacity .5s ease, transform .5s ease; }
+.screen.out { opacity: 0; pointer-events: none; }
+#analysis.out { transform: translateY(-14px); }
+#result.out { transform: translateY(24px); }
+
+/* robot */
+.robot svg { display: block; width: 100%; height: 100%; }
+.robot .head { animation: float 3.4s ease-in-out infinite; }
+.robot .shadow { height: 6px; margin: 8px auto 0; border-radius: 50%; background: #14131a; opacity: .13; animation: shadow 3.4s ease-in-out infinite; }
+.eyes, .dots, .sad { transition: opacity .25s; }
+.eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+.dots, .sad { opacity: 0; }
+.robot.thinking .eyes, .robot.crying .eyes { opacity: 0; animation: none; }
+.robot.thinking .dots { opacity: 1; }
+.robot.thinking .dots circle { transform-box: fill-box; transform-origin: center; animation: bounce 1s ease-in-out infinite; }
+.robot.thinking .dots circle:nth-child(2) { animation-delay: .15s; }
+.robot.thinking .dots circle:nth-child(3) { animation-delay: .3s; }
+.robot.crying .sad { opacity: 1; }
+.robot.crying .tear { transform-box: fill-box; transform-origin: top; animation: tear 1.6s ease-in infinite; }
+
+/* screen A: analysis */
+#analysis .robot { position: absolute; left: 50%; top: 27%; width: 64px; transform: translate(-50%, -50%); }
+#analysis .robot .shadow { width: 40px; }
+.an-copy { position: absolute; left: 0; right: 0; top: calc(27% + 56px); padding: 0 28px; text-align: center; }
+.an-copy h1 { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.35; }
+.an-copy p { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); }
+.steps { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.steps li { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12.5px; line-height: 1.3; color: var(--faint); transition: color .3s; }
+.steps li.active, .steps li.done, .steps li.error { color: var(--ink); }
+.steps .ic { width: 16px; height: 16px; flex: none; display: grid; place-items: center; }
+.steps .ic > * { display: none; }
+.steps li.active .spin { display: block; }
+.steps li.done .ok { display: block; animation: pop .3s cubic-bezier(.2,.9,.3,1.3); }
+.steps li.error .warn { display: block; animation: pop .3s cubic-bezier(.2,.9,.3,1.3); }
+.spin { width: 13px; height: 13px; border-radius: 50%; border: 2px solid var(--orange); border-right-color: transparent; animation: spin .8s linear infinite; }
+.refresh { margin: 20px auto 0; display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; color: var(--orange); font: 500 13.5px var(--font); padding: 8px 14px; border-radius: 99px; transition: opacity .3s, background .2s; }
+.refresh[aria-hidden="true"] { opacity: 0; }
+.refresh.press { background: var(--orange-soft); }
+.refresh.press svg { animation: spin .5s linear; }
+
+/* screen B: result */
+.scroller { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; padding: 44px 0 112px; }
+.scroller::-webkit-scrollbar { display: none; }
+#result .robot { width: 58px; margin: 12px auto 0; }
+#result .robot .shadow { width: 36px; }
+.wrap { padding: 0 14px; }
+.card { background: var(--card); border: 1px solid var(--card-line); border-radius: 10px; }
+.track { margin-top: 12px; padding: 16px 14px; text-align: center; }
+.track .hi { margin: 0; font-size: 11.5px; line-height: 1.55; }
+.track .name { margin: 10px 0 0; font-size: 16px; font-weight: 700; color: var(--green); }
+.track .quote { margin: 10px 0 0; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.o { color: var(--orange); }
+.divider { height: 1px; background: var(--rule); margin: 18px 0; }
+.sec-h { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-size: 14.5px; font-weight: 600; }
+.sec-h svg { flex: none; }
+.sec-sub { margin: -4px 0 10px; font-size: 12px; color: var(--muted); }
+.issues { padding: 4px 14px; }
+.issue { padding: 12px 0; }
+.issue + .issue { border-top: 1px solid var(--rule); }
+.issue h3 { margin: 0; font-size: 12.5px; font-weight: 600; }
+.issue dl { margin: 8px 0 0 8px; font-size: 12px; line-height: 1.55; }
+.issue dt { font-weight: 600; margin-top: 8px; }
+.issue dd { margin: 6px 0 0; }
+.scores { padding: 6px 12px; }
+.scores div { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; font-size: 12.5px; }
+.scores b { font-weight: 600; }
+.critical { color: var(--red); } .needs { color: var(--orange); } .excellent { color: var(--blue); } .ontrack { color: var(--green); }
+.note { margin-top: 12px; padding: 12px; }
+.note h3 { margin: 0; font-size: 13.5px; font-weight: 600; }
+.note p { margin: 8px 0 0; font-size: 12px; line-height: 1.55; }
+.summary { padding: 4px 12px; }
+.summary section { padding: 12px 0; }
+.summary section + section { border-top: 1px solid var(--rule); }
+.summary h3 { margin: 0; font-size: 12.5px; font-weight: 600; }
+.summary p { margin: 8px 0 0; font-size: 12px; line-height: 1.6; }
+
+.totop { position: absolute; z-index: 4; right: 14px; bottom: 96px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--phone); color: var(--orange); box-shadow: 0 2px 10px rgba(20,19,26,.14); display: grid; place-items: center; transition: opacity .3s, transform .3s; padding: 0; }
+.totop[aria-hidden="true"] { opacity: 0; transform: translateY(8px); }
+.totop.press { transform: scale(.85); }
+.cta-bar { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; padding: 14px 14px 26px; background: linear-gradient(to bottom, rgba(255,255,255,0), var(--phone) 30%); }
+.cta { width: 100%; height: 44px; border: 0; border-radius: 8px; background: var(--ink); color: #fff; font: 600 14px var(--font); transition: transform .15s, opacity .15s; }
+.cta.press { transform: scale(.97); opacity: .85; }
+
+.tap { position: absolute; z-index: 9; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(20,19,26,.2); pointer-events: none; animation: tap .5s ease-out forwards; }
+
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.controls button:hover { border-color: #b9bfd0; }
+.controls .step { font-size: 12px; min-width: 84px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .13; } 50% { transform: scaleX(.85); opacity: .08; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop { from { transform: scale(.3); } to { transform: scale(1); } }
+@keyframes tear { 0% { transform: translateY(-2px) scale(.6); opacity: 0; } 25% { opacity: 1; transform: translateY(0) scale(1); } 100% { transform: translateY(5px); opacity: 0; } }
+@keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .robot .head, .robot .shadow, .eyes, .robot.crying .tear { animation: none; }
+}
+</style>
+
+<template id="robotTpl">
+  <div class="head">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <radialGradient id="rimG" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#eef2fb"/><stop offset=".55" stop-color="#a9b6d3"/><stop offset="1" stop-color="#5d6c93"/></radialGradient>
+        <radialGradient id="faceG" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#26294a"/><stop offset="1" stop-color="#0a0b18"/></radialGradient>
+        <linearGradient id="glowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc06a"/><stop offset="1" stop-color="#f26a0d"/></linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="47" fill="url(#rimG)"/>
+      <rect x="15" y="22" width="70" height="58" rx="27" fill="url(#faceG)"/>
+      <path d="M28 30c6-3.5 13-4.6 20-4.6" stroke="#ffffff" stroke-opacity=".16" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <g class="eyes"><ellipse cx="39" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/><ellipse cx="61" cy="51" rx="5.6" ry="8" fill="url(#glowG)"/></g>
+      <g class="dots"><circle cx="35" cy="54" r="5.4" fill="url(#glowG)"/><circle cx="50" cy="50" r="5.4" fill="url(#glowG)"/><circle cx="65" cy="54" r="5.4" fill="url(#glowG)"/></g>
+      <g class="sad">
+        <path d="M32 47l11 3.5M68 47l-11 3.5" stroke="#e9edf7" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+        <path class="tear" d="M62 56c-2.6 3.6-3.9 6-3.9 7.6a3.9 3.9 0 0 0 7.8 0c0-1.6-1.3-4-3.9-7.6z" fill="#3aa3ff"/>
+      </g>
+    </svg>
+  </div>
+  <div class="shadow"></div>
+</template>
+
+<div class="stage">
+  <div class="phone-wrap" id="phoneWrap"><div class="phone" id="phone" aria-label="Qubio result prototype">
+    <div class="status">
+      <span>9:41</span>
+      <span class="icons" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#14131a"><rect x="0" y="7" width="3" height="4" rx=".8"/><rect x="4.6" y="5" width="3" height="6" rx=".8"/><rect x="9.2" y="2.5" width="3" height="8.5" rx=".8"/><rect x="13.8" y="0" width="3" height="11" rx=".8"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round"><path d="M1 3.8a9 9 0 0 1 13 0"/><path d="M3.3 6.3a5.6 5.6 0 0 1 8.4 0"/><circle cx="7.5" cy="9" r=".9" fill="#14131a" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="#14131a" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#14131a"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="#14131a" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <!-- Screen A: analysis -->
+    <section class="screen" id="analysis">
+      <div class="robot thinking" id="robotA"></div>
+      <div class="an-copy">
+        <h1>Next step noted. Let's do this!</h1>
+        <p>I'll share insights just for you.</p>
+        <ul class="steps" id="steps">
+          <li>Analyzing your performance level<span class="ic"><span class="spin"></span><svg class="ok" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#f26a0d"/><path d="M4.6 8.2l2.3 2.2 4.5-4.6" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="warn" width="16" height="16" viewBox="0 0 16 16"><path d="M8 1.2 15.2 14H.8z" fill="#e0321f" stroke="#e0321f" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6v3.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.8" r=".95" fill="#fff"/></svg></span></li>
+          <li>Breaking down your challenges<span class="ic"></span></li>
+          <li>Evaluating your behavior patterns<span class="ic"></span></li>
+          <li>Identifying areas for improvement<span class="ic"></span></li>
+          <li>Generating potential solutions<span class="ic"></span></li>
+          <li>Personalizing your goal plan<span class="ic"></span></li>
+        </ul>
+        <button class="refresh" id="refresh" type="button" tabindex="-1" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 6.5A5.6 5.6 0 0 0 3.2 5"/><path d="M3 2v3.2h3.2"/><path d="M2.5 9.5A5.6 5.6 0 0 0 12.8 11"/><path d="M13 14v-3.2H9.8"/></svg>
+          Refresh
+        </button>
+      </div>
+    </section>
+
+    <!-- Screen B: result -->
+    <section class="screen out" id="result">
+      <div class="scroller" id="scroller">
+        <div class="robot" id="robotB"></div>
+        <div class="wrap">
+          <div class="card track">
+            <p class="hi">Hello <span class="o">Jaja</span>,<br>Your answers suggest you're currently on the:</p>
+            <p class="name">Optimal track</p>
+            <p class="quote">“You're on a solid path, so keep showing up for that focus you're aiming for.”</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="wrap">
+          <h2 class="sec-h"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="7" r="4.6" stroke="#f26a0d" stroke-width="1.8"/><circle cx="9" cy="7" r="1.8" fill="#f26a0d"/><path d="M6.4 11l-1 5 3.6-1.6 3.6 1.6-1-5" stroke="#f26a0d" stroke-width="1.6" stroke-linejoin="round"/></svg>Masalah ditemukan</h2>
+          <div class="card issues">
+            <div class="issue"><h3>1. Distraction</h3><dl><dt>Factor :</dt><dd>Lorem Ipsum has been the industry's</dd><dt>Solution :</dt><dd>To overcome distractions, create a quiet space for focused work. Try setting a specific time for deep work, using tools like the Pomodoro Technique to stay on task.</dd></dl></div>
+            <div class="issue"><h3>2. Perfectionist</h3><dl><dt>Factor :</dt><dd>Lorem Ipsum has been the industry's</dd><dt>Solution :</dt><dd>To overcome distractions, create a quiet space for focused work. Try setting a specific time for deep work, using tools like the Pomodoro Technique to stay on task.</dd></dl></div>
+            <div class="issue"><h3>3. Lack of priority</h3><dl><dt>Factor :</dt><dd>Lorem Ipsum has been the industry's</dd><dt>Solution :</dt><dd>To overcome distractions, create a quiet space for focused work. Try setting a specific time for deep work, using tools like the Pomodoro Technique to stay on task.</dd></dl></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="wrap">
+          <h2 class="sec-h"><svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="#f26a0d"/><path d="M11.8 6.2 10 10 6.2 11.8 8 8z" fill="#fff"/></svg>Hal yang perlu ditingkatkan <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#14131a" stroke-width="1.4"><circle cx="8" cy="8" r="6.6"/><path d="M8 7.2v4" stroke-linecap="round"/><circle cx="8" cy="5" r=".6" fill="#14131a"/></svg></h2>
+          <p class="sec-sub">Ini rincian singkat dari skor produktivitas kamu.</p>
+          <div class="card scores">
+            <div><span>Time management</span><b class="critical">Critical</b></div>
+            <div><span>Focus</span><b class="needs">Needs Improvement</b></div>
+            <div><span>Balance</span><b class="excellent">Excellent</b></div>
+            <div><span>Motivation</span><b class="excellent">Excellent</b></div>
+            <div><span>Diligence</span><b class="ontrack">On Track</b></div>
+            <div><span>Perfectionist</span><b class="ontrack">On Track</b></div>
+            <div><span>Perfectionist</span><b class="ontrack">On Track</b></div>
+          </div>
+          <div class="card note">
+            <h3>Catatan</h3>
+            <p>Hasil ini dibuat berdasarkan jawabanmu. Meskipun analisisnya cukup akurat, penilaian profesional bisa memberikan hasil berbeda.</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="wrap">
+          <h2 class="sec-h"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="3" stroke="#f26a0d" stroke-width="1.8"/><circle cx="6.4" cy="6.4" r="1.2" fill="#f26a0d"/><circle cx="11.6" cy="6.4" r="1.2" fill="#f26a0d"/><circle cx="9" cy="9" r="1.2" fill="#f26a0d"/><circle cx="6.4" cy="11.6" r="1.2" fill="#f26a0d"/><circle cx="11.6" cy="11.6" r="1.2" fill="#f26a0d"/></svg>Ringkasan</h2>
+          <div class="card summary">
+            <section><h3>Kekuatan</h3><p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p></section>
+            <section><h3>Kelemahan</h3><p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p></section>
+            <section><h3>Tantangan</h3><p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p></section>
+          </div>
+        </div>
+      </div>
+
+      <button class="totop" id="totop" type="button" aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10l4-4 4 4"/></svg>
+      </button>
+      <div class="cta-bar"><button class="cta" id="cta" type="button" tabindex="-1">Let's Take Action!</button></div>
+    </section>
+
+    <div class="home"></div>
+  </div></div>
+
+  <div class="controls">
+    <button type="button" id="restart">Ulangi</button>
+    <span class="step" id="stepLbl">Analyzing</span>
+    <button type="button" id="pause">Jeda</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var tpl = $("robotTpl");
+  ["robotA", "robotB"].forEach(function (id, n) {
+    var node = tpl.content.cloneNode(true);
+    // unique gradient ids per copy
+    node.querySelectorAll("[id]").forEach(function (el) { el.id = el.id + n; });
+    node.querySelectorAll("[fill^='url(#']").forEach(function (el) { el.setAttribute("fill", el.getAttribute("fill").replace(/\)$/, n + ")")); });
+    $(id).appendChild(node);
+  });
+
+  var phone = $("phone"), robotA = $("robotA"), analysis = $("analysis"), result = $("result"),
+      steps = Array.prototype.slice.call($("steps").children), refresh = $("refresh"),
+      scroller = $("scroller"), totop = $("totop"), cta = $("cta"), lbl = $("stepLbl");
+  // every row gets the same icon set
+  var icons = steps[0].querySelector(".ic").innerHTML;
+  steps.forEach(function (li) { li.querySelector(".ic").innerHTML = icons; });
+
+  var token = 0, paused = false, CANCEL = {};
+  function wait(ms) {
+    var my = token, t = 0;
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        if (my !== token) return reject(CANCEL);
+        if (t >= ms) return resolve();
+        setTimeout(function () { if (!paused) t += 30; tick(); }, 30);
+      })();
+    });
+  }
+  function scrollTo(target, ms) {
+    var my = token, from = scroller.scrollTop, t = 0, last = performance.now();
+    return new Promise(function (resolve, reject) {
+      function frame(now) {
+        if (my !== token) return reject(CANCEL);
+        if (!paused) t += now - last;
+        last = now;
+        var p = Math.min(1, t / ms), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        scroller.scrollTop = from + (target - from) * e;
+        if (p < 1) requestAnimationFrame(frame); else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function tapAt(el) {
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect(), k = p.width / phone.offsetWidth;
+    var d = document.createElement("span"); d.className = "tap";
+    d.style.left = ((r.left - p.left + r.width / 2) / k) + "px";
+    d.style.top = ((r.top - p.top + r.height / 2) / k) + "px";
+    phone.appendChild(d);
+    setTimeout(function () { d.remove(); }, 600);
+  }
+  async function press(el) {
+    tapAt(el); el.classList.add("press");
+    await wait(220); el.classList.remove("press");
+  }
+  function setStep(li, state) { li.className = state || ""; }
+
+  scroller.addEventListener("scroll", function () {
+    totop.setAttribute("aria-hidden", scroller.scrollTop > 200 ? "false" : "true");
+  });
+
+  function reset() {
+    token++;
+    paused = false; $("pause").textContent = "Jeda";
+    analysis.classList.remove("out");
+    result.classList.add("out");
+    robotA.className = "robot thinking";
+    steps.forEach(function (li) { setStep(li, ""); });
+    refresh.setAttribute("aria-hidden", "true");
+    scroller.scrollTop = 0;
+    lbl.textContent = "Analyzing";
+  }
+
+  async function run() {
+    reset();
+    try {
+      await wait(700);
+      for (var i = 0; i < steps.length - 1; i++) {
+        setStep(steps[i], "active");
+        await wait(1000);
+        setStep(steps[i], "done");
+        await wait(150);
+      }
+      // last step fails
+      var last = steps[steps.length - 1];
+      setStep(last, "active");
+      await wait(1300);
+      setStep(last, "error");
+      robotA.className = "robot crying";
+      refresh.setAttribute("aria-hidden", "false");
+      lbl.textContent = "Error";
+      await wait(2200);
+      // tap Refresh, retry the last step
+      await press(refresh);
+      refresh.setAttribute("aria-hidden", "true");
+      robotA.className = "robot thinking";
+      lbl.textContent = "Retry";
+      setStep(last, "active");
+      await wait(1400);
+      setStep(last, "done");
+      await wait(800);
+
+      // result screen
+      analysis.classList.add("out");
+      result.classList.remove("out");
+      lbl.textContent = "Result";
+      await wait(1800);
+      await scrollTo(scroller.scrollHeight - scroller.clientHeight, 9000);
+      await wait(1200);
+      await press(totop);
+      await scrollTo(0, 900);
+      await wait(1000);
+      await press(cta);
+      await wait(1800);
+      run();
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+
+  $("restart").addEventListener("click", run);
+  $("pause").addEventListener("click", function () { paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda"; });
+  run();
+})();
+(function () {
+  var wrap = document.getElementById("phoneWrap"), ph = document.getElementById("phone"), ctr = document.querySelector(".controls");
+  function fit() {
+    var cs = getComputedStyle(document.body);
+    var padX = parseFloat(cs.paddingLeft) * 2, padY = parseFloat(cs.paddingTop) * 2;
+    var k = Math.min((window.innerHeight - padY - ctr.offsetHeight - 14) / 780, (window.innerWidth - padX) / 375, 1);
+    if (k < 0.2) k = 0.2;
+    ph.style.transform = "scale(" + k + ")";
+    wrap.style.width = (375 * k) + "px";
+    wrap.style.height = (780 * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+})();
+</script>
+
+</body></html>
