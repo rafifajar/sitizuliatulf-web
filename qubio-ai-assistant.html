@@ -1,0 +1,401 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.controls { display: none !important; }
+</style></head><body>
+<title>Qubio AI Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone prototype on a dark stage. Splash -> keyboard typing -> loading -> answer -> regenerate -> second answer (scrollable, 1/2 pager).
+   Single committed look matching the user's screens: white UI, near-black accents, orange suggestion pill. */
+:root {
+  color-scheme: light;
+  --ground: #F1F4FB; --phone: #ffffff; --ink: #14131a; --muted: #5f6472; --faint: #9aa0ad;
+  --orange: #f7781f; --peach: #fff3e8; --line: #e3e5ea; --soft: #f3f4f7; --primary: #111827;
+  --kb: #d3d6dd; --stage-text: #5f6472; --stage-btn: #ffffff; --stage-btn-line: #dfe2e8;
+  --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--ground); color: var(--stage-text); font-family: var(--font); display: grid; place-items: center; padding-block: 14px; padding-inline: 14px; box-sizing: border-box; }
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
+.phone-wrap { position: relative; flex: none; }
+.phone { position: absolute; left: 0; top: 0; width: 375px; height: 812px; transform-origin: top left; background: var(--phone); color: var(--ink); overflow: hidden; border-radius: 44px; box-shadow: 0 0 0 1px #e3e7f0, 0 8px 20px -14px rgba(23,21,18,.16); }
+.status { position: absolute; z-index: 30; top: 0; left: 0; right: 0; height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 6px 24px 0; box-sizing: border-box; font-size: 13px; font-weight: 600; background: var(--phone); }
+.status .icons { display: flex; gap: 5px; align-items: center; }
+.status svg { display: block; }
+.home { position: absolute; z-index: 60; bottom: 7px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+
+.hdr { position: absolute; z-index: 20; top: 44px; left: 0; right: 0; height: 50px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--phone); border-bottom: 1px solid var(--soft); transition: opacity .3s; }
+.hdr b { font-size: 14px; font-weight: 600; }
+.hdr b small { font-size: 12px; font-weight: 400; }
+.hdr .sp { flex: 1; }
+.hdr .ic { display: flex; gap: 16px; }
+.hdr .chat-ic { display: none; }
+.phone.chatting .hdr .splash-ic { display: none; }
+.phone.chatting .hdr .chat-ic { display: flex; }
+.phone.loading .hdr { opacity: 0; }
+
+/* robot */
+.robot svg { display: block; width: 100%; height: 100%; }
+.robot .head { animation: float 3.4s ease-in-out infinite; }
+.robot .shadow { height: 7px; margin: 12px auto 0; border-radius: 50%; background: #14131a; opacity: .1; animation: shadow 3.4s ease-in-out infinite; }
+.robot.flat .head, .robot.flat .shadow { animation: none; }
+.robot.flat .shadow { display: none; }
+.eyes { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+
+/* splash */
+.splash { position: absolute; left: 0; right: 0; top: 94px; bottom: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 22px; transition: opacity .3s, transform .35s cubic-bezier(.3,.7,.2,1); }
+.splash .robot { width: 108px; }
+.splash .robot .shadow { width: 64px; }
+.splash .hi { margin: 22px 0 0; font-size: 12px; color: var(--muted); }
+.splash h1 { margin: 12px 0 0; font-size: 14.5px; font-weight: 600; line-height: 1.45; text-wrap: balance; }
+.phone.typing .splash { transform: translateY(-110px); }
+.phone.typing .splash h1 { opacity: .25; }
+.phone.loading .splash, .phone.chatting .splash { opacity: 0; pointer-events: none; }
+
+/* loading */
+.loader { position: absolute; inset: 0; z-index: 25; background: var(--phone); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .35s; }
+.loader .robot { width: 108px; }
+.loader .robot .shadow { width: 64px; }
+.loader p { margin: 22px 0 0; font-size: 14px; font-weight: 600; }
+.loader p i { font-style: normal; display: inline-block; animation: dotfade 1.2s infinite; }
+.loader p i:nth-child(2) { animation-delay: .2s; } .loader p i:nth-child(3) { animation-delay: .4s; }
+.phone.loading .loader { opacity: 1; }
+
+/* chat */
+.chat { position: absolute; left: 0; right: 0; top: 94px; bottom: 124px; overflow-y: auto; scrollbar-width: none; padding: 16px 14px 20px; box-sizing: border-box; opacity: 0; pointer-events: none; transition: opacity .35s; }
+.chat::-webkit-scrollbar { display: none; }
+.phone.chatting .chat { opacity: 1; pointer-events: auto; }
+.when { text-align: center; font-size: 10.5px; color: var(--faint); }
+.me { margin: 14px 0 0 auto; width: fit-content; max-width: 78%; background: var(--soft); border-radius: 12px 12px 4px 12px; padding: 10px 12px; font-size: 12px; line-height: 1.5; }
+.ans-h { display: flex; align-items: center; gap: 8px; margin-top: 22px; font-size: 12px; font-weight: 600; }
+.ans-h .av { width: 20px; height: 20px; }
+.ans-h .grow { flex: 1; }
+.pager { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 500; opacity: 0; transition: opacity .3s; }
+.pager.on { opacity: 1; }
+.pager button { border: 0; background: none; padding: 2px; display: grid; place-items: center; color: var(--ink); border-radius: 50%; }
+.pager button.off { color: var(--faint); }
+.ans { margin-top: 12px; font-size: 12px; line-height: 1.6; }
+.ans p { margin: 0 0 10px; }
+.ans ul, .ans ol { margin: 0 0 10px; padding-left: 20px; }
+.ans li { margin-bottom: 4px; }
+.ans.in > * { animation: rise .45s cubic-bezier(.2,.8,.2,1) both; }
+.typing-ind { display: flex; gap: 4px; padding: 12px 0; }
+.typing-ind i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: bounce 1s ease-in-out infinite; }
+.typing-ind i:nth-child(2) { animation-delay: .15s; } .typing-ind i:nth-child(3) { animation-delay: .3s; }
+.acts { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.acts .save { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 99px; font-size: 10.5px; }
+.acts .regen { width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; background: var(--phone); transition: transform .15s; }
+.acts .regen.spin svg { animation: spin .6s linear; }
+.acts .time { margin-left: auto; font-size: 10.5px; color: var(--muted); }
+.down { position: absolute; z-index: 21; right: 14px; bottom: 170px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; display: grid; place-items: center; opacity: 0; transition: opacity .3s; pointer-events: none; padding: 0; }
+.down.on { opacity: 1; pointer-events: auto; }
+
+/* footer: suggestions + input */
+.foot { position: absolute; z-index: 22; left: 0; right: 0; bottom: 0; padding: 0 14px 30px; background: var(--phone); transition: transform .35s cubic-bezier(.3,.7,.2,1); }
+.sugg-row { display: flex; justify-content: flex-end; align-items: center; gap: 6px; padding: 8px 0 12px; }
+.dotbtn { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); display: grid; place-items: center; }
+.sugg { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid var(--orange); border-radius: 99px; color: var(--orange); font-size: 10.5px; background: var(--phone); }
+.field { display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 8px 0 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 12.5px; transition: border-color .25s; }
+.field .t { flex: 1; min-width: 0; color: var(--faint); white-space: nowrap; overflow: hidden; }
+.field.focus { border-color: var(--orange); }
+.field.filled .t { color: var(--ink); }
+.field .spark { flex: none; }
+.field.focus .spark, .field.filled .spark { display: none; }
+.caret { display: inline-block; width: 1.5px; height: 15px; background: var(--ink); vertical-align: -3px; margin: 0 1px; animation: caret 1s steps(1) infinite; }
+.send { width: 26px; height: 26px; flex: none; border-radius: 50%; background: #cfd3dc; display: grid; place-items: center; transition: background .25s, transform .15s; }
+.field.filled .send { background: var(--ink); }
+.send.press { transform: scale(.82); }
+.phone.typing .foot { transform: translateY(-252px); padding-bottom: 8px; }
+
+/* keyboard */
+.kb { position: absolute; z-index: 23; left: 0; right: 0; bottom: 0; height: 252px; background: var(--kb); padding: 8px 3px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; transform: translateY(100%); transition: transform .35s cubic-bezier(.3,.7,.2,1); }
+.phone.typing .kb { transform: none; }
+.krow { display: flex; justify-content: center; gap: 5px; }
+.krow.pad { padding: 0 16px; }
+.k { flex: 1; max-width: 32px; height: 38px; border-radius: 5px; background: #fff; box-shadow: 0 1px 0 #8e9199; display: grid; place-items: center; font-size: 15px; color: #111; transition: background .08s, transform .08s; }
+.k.fn { background: #abb0bb; font-size: 13px; }
+.k.wide { max-width: 42px; }
+.k.w2 { max-width: 44px; } .k.w3 { max-width: 84px; }
+.k.space { max-width: none; flex: 4; font-size: 13px; }
+.k.hit { background: #c3c7d0; transform: scale(1.08); }
+
+.tap { position: absolute; z-index: 90; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(20,19,26,.22); pointer-events: none; animation: tap .5s ease-out forwards; }
+
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.controls button:hover { border-color: #4a4468; }
+.controls .step { font-size: 12px; min-width: 120px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .1; } 50% { transform: scaleX(.85); opacity: .06; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes dotfade { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .robot .head, .robot .shadow, .eyes, .ans.in > * { animation: none; } }
+</style>
+
+<template id="robotTpl">
+  <div class="head">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <radialGradient id="rimG" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#eef2fb"/><stop offset=".55" stop-color="#a9b6d3"/><stop offset="1" stop-color="#5d6c93"/></radialGradient>
+        <radialGradient id="faceG" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#26294a"/><stop offset="1" stop-color="#0a0b18"/></radialGradient>
+        <linearGradient id="glowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe6f5"/></linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="47" fill="url(#rimG)"/>
+      <rect x="15" y="22" width="70" height="58" rx="27" fill="url(#faceG)"/>
+      <g class="eyes"><ellipse cx="39" cy="51" rx="6" ry="8.4" fill="url(#glowG)"/><ellipse cx="61" cy="51" rx="6" ry="8.4" fill="url(#glowG)"/></g>
+    </svg>
+  </div>
+  <div class="shadow"></div>
+</template>
+
+<div class="stage">
+  <div class="phone-wrap" id="phoneWrap"><div class="phone" id="phone" aria-label="Qubio AI assistant prototype">
+    <div class="status">
+      <span>9:41</span>
+      <span class="icons" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#14131a"><rect x="0" y="7" width="3" height="4" rx=".8"/><rect x="4.6" y="5" width="3" height="6" rx=".8"/><rect x="9.2" y="2.5" width="3" height="8.5" rx=".8"/><rect x="13.8" y="0" width="3" height="11" rx=".8"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round"><path d="M1 3.8a9 9 0 0 1 13 0"/><path d="M3.3 6.3a5.6 5.6 0 0 1 8.4 0"/><circle cx="7.5" cy="9" r=".9" fill="#14131a" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="#14131a" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#14131a"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="#14131a" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    
+    <header class="hdr">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3M8 4 3 9l5 5"/></svg>
+      <b>Qubio <small>(AI Assistant)</small></b><span class="sp"></span>
+      <span class="ic splash-ic">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9a6.5 6.5 0 1 0 2-4.7"/><path d="M2.5 2.5v3h3"/><path d="M9 5.5V9l2.3 1.4"/></svg>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="6.8"/><path d="M9 8.2V12.5"/><circle cx="9" cy="5.6" r=".5" fill="#14131a"/></svg>
+      </span>
+      <span class="ic chat-ic">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="10" r="6"/><path d="M9 10V7M7 1.8h4M14 4l1-1"/></svg>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#14131a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h12M7 5V3h4v2M4.5 5l.8 10h7.4l.8-10"/></svg>
+      </span>
+    </header>
+
+    <section class="splash">
+      <div class="robot" data-robot></div>
+      <p class="hi">Hi, Jaja&#128075;</p>
+      <h1>I'm here to help you with productivity and growth! Share your thoughts or get inspired by suggestions</h1>
+    </section>
+
+    <section class="chat" id="chat">
+      <p class="when">Today 08:00PM</p>
+      <div class="me" id="me">Apa itu define?</div>
+      <div class="ans-h"><div class="av robot flat" data-robot></div><span class="grow">My answer</span>
+        <span class="pager" id="pager"><button type="button" id="prev" tabindex="-1" aria-label="Previous answer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3 4.5 7l4 4"/></svg></button><span id="pg">2/2</span><button type="button" id="next" tabindex="-1" aria-label="Next answer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5.5 3 4 4-4 4"/></svg></button></span>
+      </div>
+      <div class="ans" id="ans"></div>
+      <div class="acts" id="acts">
+        <span class="save"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="#14131a" stroke-width="1.3" stroke-linejoin="round"><rect x="1.5" y="2" width="11" height="10" rx="1.5"/><path d="M5 2v3.5h4V2M4.5 9h5"/></svg>Save Answer</span>
+        <span class="regen" id="regen"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 6.5A5.6 5.6 0 0 0 3.2 5"/><path d="M3 2v3.2h3.2"/><path d="M2.5 9.5A5.6 5.6 0 0 0 12.8 11"/><path d="M13 14v-3.2H9.8"/></svg></span>
+        <span class="time" id="atime">02:15 PM</span>
+      </div>
+    </section>
+    <button class="down" id="down" type="button" tabindex="-1" aria-label="Scroll down"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 4.5 3 3 3-3"/></svg></button>
+
+    <div class="loader"><div class="robot" data-robot></div><p>Hang tight<i>.</i><i>.</i><i>.</i></p></div>
+
+    <footer class="foot" id="foot">
+      <div class="sugg-row"><span class="dotbtn"><svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m4 2 3 3-3 3"/></svg></span>
+        <span class="sugg"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#f7a21f" stroke-width="1.3" stroke-linecap="round"><path d="M5.2 10.5h3.6M5.6 12.5h2.8"/><path d="M4.5 8.6A4 4 0 1 1 9.5 8.6c-.6.5-.8 1-.8 1.9H5.3c0-.9-.2-1.4-.8-1.9z" fill="#ffe1a8"/><path d="M7 .5v.8M1.5 5.5h-.8M13.3 5.5h-.8M2.6 1.6l.6.6M11.4 1.6l-.6.6"/></svg>Suggestions</span></div>
+      <div class="field" id="field">
+        <svg class="spark" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#9aa0ad" stroke-width="1.2" stroke-linejoin="round"><path d="M5 1.5 6 4.5 9 5.5 6 6.5 5 9.5 4 6.5 1 5.5 4 4.5z"/><path d="M10.5 8l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z"/></svg>
+        <span class="t" id="ftext">Ask me anything</span>
+        <span class="send" id="send"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M12.5 1.5 1.5 5.8l4 1.7 1.7 4z"/><path d="M5.5 7.5l7-6"/></svg></span>
+      </div>
+    </footer>
+    <div class="kb" id="kb" aria-hidden="true"><div class="krow"><span class="k" data-k="q">Q</span><span class="k" data-k="w">W</span><span class="k" data-k="e">E</span><span class="k" data-k="r">R</span><span class="k" data-k="t">T</span><span class="k" data-k="y">Y</span><span class="k" data-k="u">U</span><span class="k" data-k="i">I</span><span class="k" data-k="o">O</span><span class="k" data-k="p">P</span></div><div class="krow pad"><span class="k" data-k="a">A</span><span class="k" data-k="s">S</span><span class="k" data-k="d">D</span><span class="k" data-k="f">F</span><span class="k" data-k="g">G</span><span class="k" data-k="h">H</span><span class="k" data-k="j">J</span><span class="k" data-k="k">K</span><span class="k" data-k="l">L</span></div><div class="krow"><span class="k fn wide">&#8679;</span><span class="k" data-k="z">Z</span><span class="k" data-k="x">X</span><span class="k" data-k="c">C</span><span class="k" data-k="v">V</span><span class="k" data-k="b">B</span><span class="k" data-k="n">N</span><span class="k" data-k="m">M</span><span class="k fn wide">&#9003;</span></div><div class="krow"><span class="k fn w2">123</span><span class="k fn">&#9786;</span><span class="k space" data-k=" ">space</span><span class="k fn w3" data-k="?">return</span></div></div>
+    <div class="home"></div>
+  </div></div>
+  <div class="controls">
+    <button type="button" id="restart">Ulangi</button>
+    <span class="step" id="lbl">Splash</span>
+    <button type="button" id="pause">Jeda</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var Q = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var tpl = $("robotTpl");
+  Q("[data-robot]").forEach(function (host, n) {
+    var node = tpl.content.cloneNode(true);
+    node.querySelectorAll("[id]").forEach(function (el) { el.id = el.id + n; });
+    node.querySelectorAll("[fill^='url(#']").forEach(function (el) { el.setAttribute("fill", el.getAttribute("fill").replace(/\)$/, n + ")")); });
+    host.appendChild(node);
+  });
+
+  var ANS = [
+    '<p>"Define" adalah kata dalam bahasa Inggris yang berarti "mendefinisikan" atau "menjelaskan makna" dari sesuatu. Dalam konteks yang lebih luas, "define" digunakan untuk memberikan penjelasan atau batasan yang jelas tentang apa sesuatu itu, biasanya berupa istilah, konsep, atau objek.</p>' +
+    '<p>Contoh penggunaan:</p><ul><li>"Please define the term \'sustainability\'." (Tolong definisikan istilah \'keberlanjutan\'.)</li><li>"The dictionary defines \'happiness\' as a state of well-being and contentment." (Kamus mendefinisikan \'kebahagiaan\' sebagai kondisi kesejahteraan dan kepuasan.)</li></ul>' +
+    '<p>Apakah ada hal lain yang ingin Anda ketahui tentang "define"?</p>',
+    '<p>Define adalah kata dalam bahasa Inggris yang berarti "mendefinisikan" atau "menjelaskan" sesuatu secara jelas.</p><p>Dalam berbagai konteks, define berarti:</p>' +
+    '<ol><li>Memberikan Arti: Menjelaskan arti atau makna dari sebuah kata, istilah, atau konsep. Misalnya, "Please define the word \'courage\'."</li>' +
+    '<li>Menentukan Batasan atau Karakteristik: Menentukan ciri-ciri utama dari sesuatu, seperti dalam mendefinisikan ruang lingkup atau batas-batas sebuah proyek.</li>' +
+    '<li>Menyusun atau Merumuskan: Dalam sains atau matematika, define bisa berarti merumuskan sesuatu secara spesifik, seperti mendefinisikan variabel dalam penelitian.</li></ol>' +
+    '<p>Secara umum, ketika kita diminta untuk "define" sesuatu, itu berarti kita diminta untuk memberikan penjelasan atau deskripsi yang jelas tentang hal tersebut.</p>' +
+    '<p>Contoh dalam kalimat sehari-hari:</p><ul><li>"Can you define your goals for this year?" (Bisakah kamu menjelaskan tujuanmu tahun ini?)</li><li>"Success is hard to define." (Kesuksesan sulit untuk didefinisikan.)</li><li>"Let\'s define the scope before we start." (Mari tentukan ruang lingkupnya sebelum mulai.)</li></ul>' +
+    '<p>Kalau kamu mau, aku bisa bantu membuat definisi untuk istilah lain juga.</p>'
+  ];
+  var TIMES = ["02:15 PM", "02:16 PM"];
+  var QUESTION = "Apa itu define?";
+
+  var phone = $("phone"), chat = $("chat"), ans = $("ans"), pager = $("pager"), pg = $("pg"), prev = $("prev"), next = $("next"),
+      acts = $("acts"), regen = $("regen"), field = $("field"), ftext = $("ftext"), send = $("send"), down = $("down"), lbl = $("lbl");
+  var shown = 0, count = 1;
+
+  var token = 0, paused = false, CANCEL = {};
+  function wait(ms) {
+    var my = token, t = 0;
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        if (my !== token) return reject(CANCEL);
+        if (t >= ms) return resolve();
+        setTimeout(function () { if (!paused) t += 30; tick(); }, 30);
+      })();
+    });
+  }
+  function scrollTo(target, ms) {
+    var my = token, from = chat.scrollTop, t = 0, last = performance.now();
+    return new Promise(function (resolve, reject) {
+      function frame(now) {
+        if (my !== token) return reject(CANCEL);
+        if (!paused) t += now - last; last = now;
+        var p = Math.min(1, t / ms), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        chat.scrollTop = from + (target - from) * e;
+        if (p < 1) requestAnimationFrame(frame); else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function tapAt(el) {
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect(), k = p.width / phone.offsetWidth;
+    var d = document.createElement("span"); d.className = "tap";
+    d.style.left = ((r.left - p.left + r.width / 2) / k) + "px";
+    d.style.top = ((r.top - p.top + r.height / 2) / k) + "px";
+    phone.appendChild(d); setTimeout(function () { d.remove(); }, 600);
+  }
+  function setField(text, focus) {
+    field.classList.toggle("focus", !!focus);
+    field.classList.toggle("filled", !!text);
+    ftext.innerHTML = "";
+    if (text || focus) {
+      ftext.appendChild(document.createTextNode(text || ""));
+      if (focus) { var c = document.createElement("span"); c.className = "caret"; ftext.appendChild(c); }
+      if (!text && focus) ftext.insertAdjacentHTML("beforeend", '<span style="color:var(--faint)">Ask me anything</span>');
+    } else ftext.textContent = "Ask me anything";
+  }
+  function showAnswer(i) {
+    shown = i;
+    ans.className = "ans"; ans.innerHTML = ANS[i]; void ans.offsetWidth; ans.className = "ans in";
+    Q("#ans > *").forEach(function (el, k) { el.style.animationDelay = (k * 90) + "ms"; });
+    $("atime").textContent = TIMES[i];
+    pg.textContent = (i + 1) + "/" + count;
+    prev.classList.toggle("off", i === 0); next.classList.toggle("off", i === count - 1);
+    acts.style.visibility = "visible";
+    updateDown();
+  }
+  function updateDown() { down.classList.toggle("on", chat.scrollHeight - chat.clientHeight - chat.scrollTop > 30); }
+  chat.addEventListener("scroll", updateDown);
+
+  function reset() {
+    token++; paused = false; $("pause").textContent = "Jeda";
+    phone.className = "phone";
+    setField("", false);
+    count = 1; pager.classList.remove("on");
+    ans.innerHTML = ""; acts.style.visibility = "hidden";
+    chat.scrollTop = 0; down.classList.remove("on");
+    lbl.textContent = "Splash";
+  }
+
+  async function run() {
+    reset();
+    try {
+      await wait(2200);
+      // 2. focus input, keyboard up, type
+      tapAt(field); await wait(150);
+      phone.classList.add("typing"); setField("", true);
+      lbl.textContent = "Typing";
+      await wait(700);
+      for (var i = 1; i <= QUESTION.length; i++) {
+        var ch = QUESTION[i - 1].toLowerCase(), key = document.querySelector('.k[data-k="' + (ch === " " ? " " : ch) + '"]');
+        if (key) { key.classList.add("hit"); setTimeout(function (k) { k.classList.remove("hit"); }.bind(null, key), 110); }
+        setField(QUESTION.slice(0, i), true);
+        await wait(130);
+      }
+      await wait(500);
+      // 3. keyboard down, text ready
+      phone.classList.remove("typing"); setField(QUESTION, false);
+      lbl.textContent = "Ready to send";
+      await wait(1100);
+      tapAt(send); send.classList.add("press"); await wait(180); send.classList.remove("press");
+      // 4. loading
+      phone.classList.add("loading"); setField("", false);
+      lbl.textContent = "Loading";
+      await wait(2200);
+      // 5. answer
+      phone.classList.remove("loading"); phone.classList.add("chatting");
+      lbl.textContent = "Short answer";
+      await wait(300);
+      showAnswer(0);
+      await wait(3200);
+      // regenerate
+      tapAt(regen); regen.classList.add("spin"); await wait(600); regen.classList.remove("spin");
+      lbl.textContent = "Regenerating";
+      acts.style.visibility = "hidden";
+      ans.className = "ans"; ans.innerHTML = '<div class="typing-ind"><i></i><i></i><i></i></div>';
+      await wait(1800);
+      // 6. second answer, scrollable
+      count = 2; pager.classList.add("on"); showAnswer(1);
+      lbl.textContent = "Answer 2/2";
+      await wait(1800);
+      await scrollTo(chat.scrollHeight - chat.clientHeight, 5200);
+      await wait(1200);
+      await scrollTo(0, 1100);
+      await wait(800);
+      // flip to the first answer and back
+      tapAt(prev); await wait(150); showAnswer(0); lbl.textContent = "Answer 1/2";
+      await wait(2400);
+      tapAt(next); await wait(150); showAnswer(1); lbl.textContent = "Answer 2/2";
+      await wait(2400);
+      run();
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+  // viewer can scroll the answer or flip answers manually once chatting
+  function manual() { token++; lbl.textContent = "Manual"; }
+  chat.addEventListener("wheel", manual, { passive: true });
+  chat.addEventListener("touchstart", manual, { passive: true });
+  prev.addEventListener("click", function (e) { if (e.isTrusted) { manual(); if (shown > 0) showAnswer(shown - 1); } });
+  next.addEventListener("click", function (e) { if (e.isTrusted) { manual(); if (shown < count - 1) showAnswer(shown + 1); } });
+  down.addEventListener("click", function () { manual(); chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" }); });
+
+  $("restart").addEventListener("click", run);
+  $("pause").addEventListener("click", function () { paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda"; });
+  run();
+})();
+(function () {
+  var wrap = document.getElementById("phoneWrap"), ph = document.getElementById("phone");
+  function fit() {
+    var cs = getComputedStyle(document.body);
+    var padX = parseFloat(cs.paddingLeft) * 2, padY = parseFloat(cs.paddingTop) * 2;
+    var k = Math.min((window.innerHeight - padY) / 812, (window.innerWidth - padX) / 375, 1);
+    if (k < 0.2) k = 0.2;
+    ph.style.transform = "scale(" + k + ")";
+    wrap.style.width = (375 * k) + "px";
+    wrap.style.height = (812 * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  fit();
+})();
+</script>
+
+</body></html>
