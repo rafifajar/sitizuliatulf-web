@@ -1,0 +1,334 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Qubio Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone prototype centered on a dark stage, screens swap in place (robot stays put, text and input change), controls underneath.
+   Single committed look: white phone UI on a deep violet-black ground, matching the user's own screens. */
+:root {
+  color-scheme: dark;
+  --ground: #0b0912;
+  --phone: #ffffff;
+  --ink: #14131a;
+  --muted: #5f6472;
+  --orange: #f26a0d;
+  --orange-soft: #ffeadb;
+  --line: #dfe2e8;
+  --off: #c6cad4;
+  --stage-text: #b9b6c9;
+  --stage-btn: #1a1726;
+  --stage-btn-line: #2e2a40;
+  --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+html, body { height: 100%; }
+body {
+  background: var(--ground);
+  color: var(--stage-text);
+  font-family: var(--font);
+  display: grid;
+  place-items: center;
+  padding-block: 16px;
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
+
+.phone {
+  position: relative;
+  height: min(780px, calc(100dvh - 92px));
+  min-height: 560px;
+  aspect-ratio: 375 / 780;
+  max-width: 100%;
+  background: var(--phone);
+  color: var(--ink);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #221e33, 0 30px 80px rgba(0,0,0,.55);
+}
+
+.status { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 0; font-size: 13px; font-weight: 600; }
+.status .icons { display: flex; gap: 5px; align-items: center; }
+.status svg { display: block; }
+
+.back { position: absolute; top: 50px; left: 14px; width: 34px; height: 34px; display: grid; place-items: center; border: 0; background: none; color: var(--ink); padding: 0; cursor: pointer; border-radius: 50%; transition: opacity .4s; }
+.back[aria-hidden="true"] { opacity: 0; pointer-events: none; }
+
+/* robot stays fixed across screens */
+.robot { position: absolute; left: 50%; top: 35%; width: 78px; transform: translate(-50%, -50%); }
+.robot .head { width: 78px; height: 78px; animation: float 3.4s ease-in-out infinite; }
+.robot .shadow { width: 46px; height: 6px; margin: 8px auto 0; border-radius: 50%; background: #14131a; opacity: .13; animation: shadow 3.4s ease-in-out infinite; }
+.robot svg { display: block; width: 100%; height: 100%; }
+.eyes { transform-box: fill-box; transform-origin: center; transition: opacity .25s, transform .25s; animation: blink 4.2s infinite; }
+.dots { opacity: 0; transition: opacity .25s; }
+.dots circle { transform-box: fill-box; transform-origin: center; }
+.thinking .eyes { opacity: 0; animation: none; transform: scaleY(.2); }
+.thinking .dots { opacity: 1; }
+.thinking .dots circle { animation: bounce 1s ease-in-out infinite; }
+.thinking .dots circle:nth-child(2) { animation-delay: .15s; }
+.thinking .dots circle:nth-child(3) { animation-delay: .3s; }
+
+/* text blocks under the robot */
+.copy { position: absolute; left: 0; right: 0; top: calc(35% + 62px); padding: 0 26px; text-align: center; transition: opacity .35s ease, transform .35s ease; }
+.copy.out { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.copy h1 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; text-wrap: balance; }
+.copy .sub { margin: 8px auto 0; font-size: 13px; line-height: 1.5; color: var(--muted); max-width: 270px; text-wrap: balance; }
+.copy .lead { margin: 0 auto; font-size: 12px; line-height: 1.5; color: var(--muted); max-width: 300px; text-wrap: balance; }
+.copy .ask { margin: 10px auto 0; font-size: 15.5px; font-weight: 600; line-height: 1.35; max-width: 300px; text-wrap: balance; }
+.o { color: var(--orange); }
+
+.ready { position: absolute; left: 50%; top: 76%; transform: translateX(-50%); border: 0; background: none; color: var(--orange); font: 500 13.5px var(--font); display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 99px; cursor: pointer; transition: opacity .35s, background .2s; white-space: nowrap; }
+.ready::before { content: ""; position: absolute; inset: 0; border-radius: inherit; border: 1.5px solid var(--orange); opacity: 0; animation: ring 2s ease-out infinite; }
+.ready:hover { background: var(--orange-soft); }
+.ready.out { opacity: 0; pointer-events: none; }
+.ready svg { animation: nudge 1.4s ease-in-out infinite; }
+
+/* answer field */
+.composer { position: absolute; left: 0; right: 0; bottom: 30px; padding: 0 16px; transition: opacity .4s, transform .4s; }
+.composer.out { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.field { position: relative; display: flex; align-items: flex-end; gap: 8px; min-height: 48px; padding: 8px 8px 8px 14px; border: 1px solid var(--line); border-radius: 10px; box-sizing: border-box; font-size: 13px; line-height: 1.45; background: var(--phone); transition: border-color .25s, box-shadow .25s; }
+.field.live { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-soft); }
+.field .t { flex: 1; min-width: 0; align-self: center; color: #8c90a0; overflow-wrap: anywhere; }
+.field.live .t { color: var(--ink); }
+.field .caret { display: inline-block; width: 1.5px; height: 15px; background: var(--orange); vertical-align: -3px; margin-left: 1px; animation: caret 1s steps(1) infinite; }
+.send { width: 30px; height: 30px; flex: none; border: 0; border-radius: 50%; background: var(--off); display: grid; place-items: center; transition: background .25s, transform .15s; padding: 0; }
+.send.on { background: var(--orange); }
+.send.press { transform: scale(.8); }
+.tap { position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; background: rgba(20,19,26,.18); pointer-events: none; animation: tap .5s ease-out forwards; }
+
+.home { position: absolute; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); }
+
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.controls button { font: 600 12.5px var(--font); color: var(--stage-text); background: var(--stage-btn); border: 1px solid var(--stage-btn-line); border-radius: 99px; padding: 8px 16px; cursor: pointer; }
+.controls button:hover { border-color: #4a4468; }
+.controls .step { font-size: 12px; font-variant-numeric: tabular-nums; min-width: 72px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes shadow { 0%, 100% { transform: scaleX(1); opacity: .13; } 50% { transform: scaleX(.85); opacity: .08; } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+@keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+@keyframes ring { 0% { opacity: .5; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.25); } }
+@keyframes caret { 50% { opacity: 0; } }
+@keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .robot .head, .robot .shadow, .ready svg, .ready::before, .eyes { animation: none; }
+  .thinking .dots circle { animation-duration: 2s; }
+}
+</style>
+
+<div class="stage">
+  <div class="phone" id="phone" aria-label="Qubio onboarding prototype">
+    <div class="status">
+      <span>9:41</span>
+      <span class="icons" aria-hidden="true">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="#14131a"><rect x="0" y="7" width="3" height="4" rx=".8"/><rect x="4.6" y="5" width="3" height="6" rx=".8"/><rect x="9.2" y="2.5" width="3" height="8.5" rx=".8"/><rect x="13.8" y="0" width="3" height="11" rx=".8"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#14131a" stroke-width="1.6" stroke-linecap="round"><path d="M1 3.8a9 9 0 0 1 13 0"/><path d="M3.3 6.3a5.6 5.6 0 0 1 8.4 0"/><circle cx="7.5" cy="9" r=".9" fill="#14131a" stroke="none"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.2" stroke="#14131a" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="2" fill="#14131a"/><rect x="22.6" y="4" width="1.8" height="4" rx=".9" fill="#14131a" opacity=".5"/></svg>
+      </span>
+    </div>
+
+    <button class="back" id="back" type="button" aria-label="Back" aria-hidden="true" tabindex="-1">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3M8 4 3 9l5 5"/></svg>
+    </button>
+
+    <div class="robot" id="robot" aria-hidden="true">
+      <div class="head">
+        <svg viewBox="0 0 100 100">
+          <defs>
+            <radialGradient id="rim" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#eef2fb"/><stop offset=".55" stop-color="#a9b6d3"/><stop offset="1" stop-color="#5d6c93"/></radialGradient>
+            <radialGradient id="face" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#26294a"/><stop offset="1" stop-color="#0a0b18"/></radialGradient>
+            <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc06a"/><stop offset="1" stop-color="#f26a0d"/></linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="47" fill="url(#rim)"/>
+          <rect x="15" y="22" width="70" height="58" rx="27" fill="url(#face)"/>
+          <path d="M28 30c6-3.5 13-4.6 20-4.6" stroke="#ffffff" stroke-opacity=".16" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          <g class="eyes">
+            <ellipse cx="39" cy="51" rx="5.6" ry="8" fill="url(#glow)"/>
+            <ellipse cx="61" cy="51" rx="5.6" ry="8" fill="url(#glow)"/>
+          </g>
+          <g class="dots">
+            <circle cx="35" cy="54" r="5.4" fill="url(#glow)"/>
+            <circle cx="50" cy="50" r="5.4" fill="url(#glow)"/>
+            <circle cx="65" cy="54" r="5.4" fill="url(#glow)"/>
+          </g>
+        </svg>
+      </div>
+      <div class="shadow"></div>
+    </div>
+
+    <section class="copy" id="welcome">
+      <h1>Hello, I'm <span class="o">Qubio</span>, your AI coach</h1>
+      <p class="sub">Let's make your goals easier to reach by answering a few quick questions.</p>
+    </section>
+
+    <section class="copy out" id="question" aria-live="polite">
+      <p class="lead" id="lead"></p>
+      <p class="ask" id="ask"></p>
+    </section>
+
+    <button class="ready" id="ready" type="button">Yes, I'm ready
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+    </button>
+
+    <div class="composer out" id="composer">
+      <div class="field" id="field">
+        <span class="t" id="typed">Type your answers here...</span>
+        <button class="send" id="send" type="button" aria-label="Send" tabindex="-1">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M12.5 1.5 1.5 5.8l4 1.7 1.7 4z"/><path d="M5.5 7.5l7-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="home"></div>
+  </div>
+
+  <div class="controls">
+    <button type="button" id="restart">Ulangi</button>
+    <span class="step" id="step">Welcome</span>
+    <button type="button" id="pause">Jeda</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var PLACEHOLDER = "Type your answers here...";
+  var STEPS = [
+    { lead: 'Nice to meet you, <span class="o">Jaja</span>! A few details help us give better support.', ask: "Which city do you live in?", ans: "Jakarta" },
+    { lead: "Nice! Just a few more details to guide you better.", ask: "How old are you?", ans: "27" },
+    { lead: "Thanks for sharing! Now, let's dive in and shape a goal that works for you.", ask: "What's something you'd like to focus on or achieve?", ans: "I want to exercise regularly and lose 5 kg this year" },
+    { lead: "Let's look deeper and make it clearer.", ask: "What challenges have you faced along the way?", ans: "I lose motivation after two weeks and my schedule keeps changing" },
+    { lead: "Noted! Challenges help shape your journey.", ask: "What worked or didn't work for you?", ans: "Morning workouts worked, strict diets didn't" },
+    { lead: "Good to know. Every detail counts.", ask: "What's your next step?", ans: "Three 20-minute morning walks this week" }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var robot = $("robot"), welcome = $("welcome"), question = $("question"), lead = $("lead"), ask = $("ask"),
+      ready = $("ready"), composer = $("composer"), field = $("field"), typed = $("typed"), send = $("send"),
+      back = $("back"), stepLbl = $("step"), phone = $("phone");
+
+  var token = 0, paused = false, CANCEL = {};
+  function wait(ms) {
+    var my = token, t = 0;
+    return new Promise(function (resolve, reject) {
+      (function tick() {
+        if (my !== token) return reject(CANCEL);
+        if (t >= ms) return resolve();
+        setTimeout(function () { if (!paused) t += 30; tick(); }, 30);
+      })();
+    });
+  }
+
+  function setField(text, live) {
+    if (live) {
+      typed.innerHTML = "";
+      typed.appendChild(document.createTextNode(text));
+      var c = document.createElement("span"); c.className = "caret"; typed.appendChild(c);
+    } else {
+      typed.textContent = PLACEHOLDER;
+    }
+    field.classList.toggle("live", !!live);
+    send.classList.toggle("on", !!(live && text));
+  }
+
+  function tapAt(el) {
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var d = document.createElement("span"); d.className = "tap";
+    d.style.left = (r.left - p.left + r.width / 2) + "px";
+    d.style.top = (r.top - p.top + r.height / 2) + "px";
+    phone.appendChild(d);
+    setTimeout(function () { d.remove(); }, 600);
+  }
+
+  function showQuestion(i) {
+    lead.innerHTML = STEPS[i].lead;
+    ask.textContent = STEPS[i].ask;
+    question.classList.remove("out");
+    stepLbl.textContent = "Q " + (i + 1) + " / " + STEPS.length;
+  }
+
+  function toWelcome() {
+    token++;
+    paused = false; $("pause").textContent = "Jeda";
+    robot.classList.remove("thinking");
+    welcome.classList.remove("out");
+    question.classList.add("out");
+    ready.classList.remove("out");
+    composer.classList.add("out");
+    back.setAttribute("aria-hidden", "true"); back.tabIndex = -1;
+    setField("", false);
+    stepLbl.textContent = "Welcome";
+  }
+
+  async function think(ms) {
+    robot.classList.add("thinking");
+    await wait(ms);
+    robot.classList.remove("thinking");
+  }
+
+  async function typeAnswer(text) {
+    tapAt(field);
+    await wait(250);
+    setField("", true);
+    await wait(350);
+    for (var i = 1; i <= text.length; i++) {
+      setField(text.slice(0, i), true);
+      await wait(text.length > 20 ? 38 : 85);
+    }
+    await wait(550);
+    tapAt(send);
+    send.classList.add("press");
+    await wait(160);
+    send.classList.remove("press");
+  }
+
+  async function run() {
+    token++;
+    try {
+      // welcome screen, then the demo taps "Yes, I'm ready" by itself
+      await wait(2200);
+      tapAt(ready);
+      ready.style.background = "var(--orange-soft)";
+      await wait(350);
+      ready.style.background = "";
+      welcome.classList.add("out");
+      ready.classList.add("out");
+      await wait(300);
+      back.setAttribute("aria-hidden", "false"); back.tabIndex = 0;
+      composer.classList.remove("out");
+      stepLbl.textContent = "Loading";
+      await think(1300);
+
+      for (var i = 0; i < STEPS.length; i++) {
+        showQuestion(i);
+        await wait(1400);
+        await typeAnswer(STEPS[i].ans);
+        // send: question fades, field clears, robot loads
+        question.classList.add("out");
+        setField("", false);
+        await wait(250);
+        if (i < STEPS.length - 1) {
+          stepLbl.textContent = "Loading";
+          await think(1500);
+        }
+      }
+      // end: robot keeps loading after the last answer, as if preparing the result
+      robot.classList.add("thinking");
+      stepLbl.textContent = "Selesai";
+      await wait(2500);
+      start();
+    } catch (e) { if (e !== CANCEL) throw e; }
+  }
+
+  function start() { toWelcome(); run(); }
+
+  back.addEventListener("click", start);
+  $("restart").addEventListener("click", start);
+  start();
+  $("pause").addEventListener("click", function () {
+    paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda";
+  });
+})();
+</script>
+
+</body></html>
