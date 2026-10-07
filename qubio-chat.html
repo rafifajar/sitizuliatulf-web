@@ -21,29 +21,29 @@
   --stage-btn-line: #dfe2e8;
   --font: "Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 body {
   background: var(--ground);
   color: var(--stage-text);
   font-family: var(--font);
   display: grid;
   place-items: center;
-  padding-block: 16px;
-  padding-inline: 16px;
+  padding-block: 14px;
+  padding-inline: 14px;
   box-sizing: border-box;
 }
 .stage { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; min-width: 0; }
 
+.phone-wrap { position: relative; flex: none; }
 .phone {
-  position: relative;
-  height: min(780px, calc(100dvh - 92px));
-  min-height: 0;
-  aspect-ratio: 375 / 780;
-  max-width: 100%;
+  position: absolute; left: 0; top: 0;
+  width: 375px; height: 780px;
+  transform-origin: top left;
   background: var(--phone);
   color: var(--ink);
   overflow: hidden;
-  border-radius: 22px; box-shadow: 0 0 0 1px #e3e7f0, 0 18px 40px -18px rgba(23,21,18,.3);
+  border-radius: 44px;
+  box-shadow: 0 0 0 1px #e3e7f0, 0 18px 40px -18px rgba(23,21,18,.3);
 }
 
 .status { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 0; font-size: 13px; font-weight: 600; }
@@ -118,7 +118,7 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 </style>
 
 <div class="stage">
-  <div class="phone" id="phone" aria-label="Qubio onboarding prototype">
+  <div class="phone-wrap" id="phoneWrap"><div class="phone" id="phone" aria-label="Qubio onboarding prototype">
     <div class="status">
       <span>9:41</span>
       <span class="icons" aria-hidden="true">
@@ -181,7 +181,7 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
     </div>
 
     <div class="home"></div>
-  </div>
+  </div></div>
 
   <div class="controls">
     <button type="button" id="restart">Ulangi</button>
@@ -232,10 +232,10 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
   }
 
   function tapAt(el) {
-    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var p = phone.getBoundingClientRect(), r = el.getBoundingClientRect(), k = p.width / phone.offsetWidth;
     var d = document.createElement("span"); d.className = "tap";
-    d.style.left = (r.left - p.left + r.width / 2) + "px";
-    d.style.top = (r.top - p.top + r.height / 2) + "px";
+    d.style.left = ((r.left - p.left + r.width / 2) / k) + "px";
+    d.style.top = ((r.top - p.top + r.height / 2) / k) + "px";
     phone.appendChild(d);
     setTimeout(function () { d.remove(); }, 600);
   }
@@ -328,6 +328,23 @@ button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
   $("pause").addEventListener("click", function () {
     paused = !paused; this.textContent = paused ? "Lanjut" : "Jeda";
   });
+})();
+(function () {
+  var wrap = document.getElementById("phoneWrap"), ph = document.getElementById("phone"),
+      ctr = document.querySelector(".controls"), stage = document.querySelector(".stage");
+  function fit() {
+    var cs = getComputedStyle(document.body);
+    var padX = parseFloat(cs.paddingLeft) * 2, padY = parseFloat(cs.paddingTop) * 2;
+    var availH = window.innerHeight - padY - ctr.offsetHeight - 14;
+    var availW = window.innerWidth - padX;
+    var k = Math.min(availH / 780, availW / 375, 1);
+    if (k < 0.2) k = 0.2;
+    ph.style.transform = "scale(" + k + ")";
+    wrap.style.width = (375 * k) + "px";
+    wrap.style.height = (780 * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  fit();
 })();
 </script>
 
