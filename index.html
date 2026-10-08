@@ -1224,7 +1224,13 @@
           var firstP = col.querySelector('.pv-text'), topOff = 0;
           if(window.innerWidth > 720 && firstP){ topOff = Math.max(0, firstP.offsetTop - col.offsetTop); }
           kids[0].style.marginTop = topOff + 'px';
-          kids[1].style.marginTop = Math.max(0, natural - topOff - kids[0].offsetHeight - gap) + 'px';
+          var stTitle = sticky.querySelector('.pv-step-title'), badge = kids[1].querySelector('.pv-live-badge'), adj = 0;
+          if(window.innerWidth > 720 && stTitle && badge){
+            var titleMid = (stTitle.getBoundingClientRect().top - sticky.getBoundingClientRect().top) + stTitle.offsetHeight / 2;
+            var badgeMid = (badge.getBoundingClientRect().top - kids[1].getBoundingClientRect().top) + badge.offsetHeight / 2;
+            adj = titleMid - badgeMid;
+          }
+          kids[1].style.marginTop = Math.max(0, natural + adj - topOff - kids[0].offsetHeight - gap) + 'px';
         }
         return;
       }
