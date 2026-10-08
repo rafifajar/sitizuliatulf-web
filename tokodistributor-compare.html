@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tokodistributor Before / After</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{ --ink:#14131a; --muted:#5f6472; --line:#e3e5ea; --bg:#F1F4FB; --red:#e0261f; --font:"Inter",-apple-system,"SF Pro Text","Segoe UI",Roboto,sans-serif; }
+html,body{height:100%; margin:0; overflow:hidden; background:var(--bg); font-family:var(--font); color:var(--ink);}
+body{display:grid; place-items:center;}
+.wrap{position:relative; flex:none;}
+.scene{position:absolute; left:0; top:0; width:520px; height:600px; transform-origin:top left;}
+
+.col{position:absolute; top:0; width:196px;}
+.col.l{left:44px;} .col.r{left:280px;}
+.badge{position:absolute; top:16px; left:0; display:inline-flex; align-items:center; gap:7px; padding:6px 12px 6px 10px; border-radius:100px; background:rgba(255,255,255,.96); border:1px solid var(--line); font-size:12px; font-weight:700; color:var(--ink);}
+.badge i{width:7px; height:7px; border-radius:50%; background:#9aa0ad; flex:none;}
+.badge.after i{background:#1eb980;}
+.phone{position:absolute; top:56px; left:0; width:196px; height:396px; box-sizing:border-box; padding:6px; border-radius:30px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
+.screen{width:184px; height:384px; border-radius:24px; overflow:hidden; background:#fff; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+.screen::-webkit-scrollbar{display:none;}
+.screen img{display:block; width:184px; height:auto;}
+
+.notes{position:absolute; left:24px; top:470px; width:472px; height:118px;}
+.note{position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s ease; pointer-events:none;}
+.note.on{opacity:1; transform:none;}
+.tag{display:inline-block; padding:7px 14px; border-radius:6px; background:var(--red); color:#fff; font-size:13px; font-weight:700; letter-spacing:.01em;}
+.card{box-sizing:border-box; width:100%; padding:10px 14px; border-radius:10px; background:#e3e9fc; border:1px solid #c7d3f6; font-size:11.5px; line-height:1.45; color:#2b3a67;}
+.card ul{margin:0; padding-left:16px; columns:2; column-gap:22px;}
+.card li{margin:0 0 3px; break-inside:avoid;}
+.card.one ul{columns:1;}
+.hint{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--muted); text-align:center; transition:opacity .35s ease; padding:0 30px;}
+.hint.off{opacity:0;}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="scene" id="scene">
+    <div class="col l">
+      <span class="badge"><i></i>Before</span>
+      <div class="phone"><div class="screen" id="sl"><img src="tokodistributor-before.png" alt="Tokodistributor home before the redesign"></div></div>
+    </div>
+    <div class="col r">
+      <span class="badge after"><i></i>After</span>
+      <div class="phone"><div class="screen" id="sr"><img src="tokodistributor-after.png" alt="Tokodistributor home after the redesign"></div></div>
+    </div>
+
+    <div class="notes">
+      <div class="hint" id="hint">Scroll through the After version to see what’s new</div>
+      <div class="note" id="noteA">
+        <span class="tag">Premium Reseller Guide</span>
+        <div class="card"><ul>
+          <li>3 banners as user guide and marketing support.</li>
+          <li>Product marketing info for reselling across marketplaces.</li>
+          <li>Social content to strengthen user connection with Tokodistributor.</li>
+          <li>Easy access to help and support.</li>
+        </ul></div>
+      </div>
+      <div class="note" id="noteB">
+        <span class="tag">Additional Information</span>
+        <div class="card one"><ul>
+          <li>Redeem vouchers or codes for marketing.</li>
+          <li>Invite users to join as premium resellers.</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var sl = $('sl'), sr = $('sr'), noteA = $('noteA'), noteB = $('noteB'), hint = $('hint');
+  var wrap = $('wrap'), scene = $('scene');
+
+  function fit(){
+    var k = Math.min(window.innerWidth / 520, window.innerHeight / 600, 1);
+    scene.style.transform = 'scale(' + k + ')';
+    wrap.style.width = (520 * k) + 'px';
+    wrap.style.height = (600 * k) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // where the two highlighted sections sit in the After screen (in rendered px)
+  function maxR(){ return Math.max(0, sr.scrollHeight - sr.clientHeight); }
+  function maxL(){ return Math.max(0, sl.scrollHeight - sl.clientHeight); }
+  function targets(){
+    var k = sr.clientWidth / 257;
+    return {
+      a: Math.min(maxR(), 731 * k - sr.clientHeight / 2),
+      b: Math.min(maxR(), 1143 * k - sr.clientHeight / 2)
+    };
+  }
+  function syncNotes(){
+    var t = targets(), y = sr.scrollTop;
+    var onA = Math.abs(y - t.a) < 110, onB = Math.abs(y - t.b) < 95;
+    noteA.classList.toggle('on', onA);
+    noteB.classList.toggle('on', onB && !onA);
+    hint.classList.toggle('off', onA || onB);
+  }
+  sr.addEventListener('scroll', syncNotes, {passive:true});
+
+  var token = 0, auto = true;
+  function wait(ms){
+    var my = token;
+    return new Promise(function(res, rej){ setTimeout(function(){ my === token ? res() : rej('x'); }, ms); });
+  }
+  function ease(p){ return p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2; }
+  function move(toR, ms){
+    var my = token, fromR = sr.scrollTop, fromL = sl.scrollTop, t0 = null;
+    var fr = maxR() ? fromR / maxR() : 0, tr = maxR() ? toR / maxR() : 0;
+    return new Promise(function(res, rej){
+      (function frame(now){
+        if(my !== token) return rej('x');
+        if(t0 === null) t0 = now;
+        var p = Math.min(1, (now - t0) / ms), e = ease(p), f = fr + (tr - fr) * e;
+        sr.scrollTop = fromR + (toR - fromR) * e;
+        sl.scrollTop = maxL() * f;
+        if(p < 1) requestAnimationFrame(frame); else res();
+      })(performance.now());
+    });
+  }
+  async function run(){
+    token++;
+    try{
+      sr.scrollTop = 0; sl.scrollTop = 0; syncNotes();
+      while(auto){
+        await wait(1400);
+        var t = targets();
+        await move(t.a, 2800);  await wait(3400);
+        await move(t.b, 2800);  await wait(3400);
+        await move(maxR(), 1000); await wait(900);
+        await move(0, 2200);
+      }
+    }catch(e){}
+  }
+  function manual(){ if(!auto) return; auto = false; token++; }
+  ['wheel','touchstart','mousedown'].forEach(function(ev){
+    sl.addEventListener(ev, manual, {passive:true});
+    sr.addEventListener(ev, manual, {passive:true});
+  });
+  var imgs = Array.prototype.slice.call(document.images), left = imgs.length;
+  imgs.forEach(function(im){
+    function done(){ if(--left <= 0) run(); }
+    if(im.complete) done(); else { im.addEventListener('load', done); im.addEventListener('error', done); }
+  });
+})();
+</script>
+</body>
+</html>
