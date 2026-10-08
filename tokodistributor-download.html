@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tokodistributor Download Massal page</title>
+<style>
+:root{ --bg:#F1F4FB; }
+html,body{height:100%; margin:0; overflow:hidden; background:var(--bg);}
+body{display:grid; place-items:center;}
+.wrap{position:relative; flex:none;}
+.scene{position:absolute; left:0; top:0; width:520px; height:600px; transform-origin:top left;}
+
+.phone{position:absolute; left:124px; top:20px; width:272px; height:560px; box-sizing:border-box; padding:6px; border-radius:34px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
+.screen{width:260px; height:548px; border-radius:28px; overflow-x:hidden; overflow-y:auto; background:#fff; scrollbar-width:none;}
+.screen::-webkit-scrollbar{display:none;}
+.screen img{display:block; width:260px; height:auto;}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="scene" id="scene">
+    <div class="phone"><div class="screen" id="sc">
+      <img src="tokodistributor-download.jpg" alt="Tokodistributor Download Massal page">
+    </div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var sc = document.getElementById('sc'), wrap = document.getElementById('wrap'), scene = document.getElementById('scene');
+
+  function fit(){
+    var k = Math.min(window.innerWidth / 520, window.innerHeight / 600, 1);
+    scene.style.transform = 'scale(' + k + ')';
+    wrap.style.width = (520 * k) + 'px';
+    wrap.style.height = (600 * k) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  var token = 0;
+  function maxS(){ return Math.max(0, sc.scrollHeight - sc.clientHeight); }
+  function wait(ms){
+    var my = token;
+    return new Promise(function(res, rej){ setTimeout(function(){ my === token ? res() : rej('x'); }, ms); });
+  }
+  function ease(p){ return p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2; }
+  function move(to, ms){
+    var my = token, from = sc.scrollTop, t0 = null;
+    return new Promise(function(res, rej){
+      (function frame(now){
+        if(my !== token) return rej('x');
+        if(t0 === null) t0 = now;
+        var p = Math.min(1, (now - t0) / ms);
+        sc.scrollTop = from + (to - from) * ease(p);
+        if(p < 1) requestAnimationFrame(frame); else res();
+      })(performance.now());
+    });
+  }
+  async function run(){
+    token++;
+    try{
+      while(true){
+        await wait(1400);
+        await move(maxS(), Math.max(6000, maxS() * 11));
+        await wait(1600);
+        await move(0, 2600);
+      }
+    }catch(e){}
+  }
+
+  // viewers can take over by scrolling; the tour resumes after a few idle seconds
+  var idle = null;
+  function manual(){
+    token++;
+    clearTimeout(idle);
+    idle = setTimeout(run, 5000);
+  }
+  ['wheel','touchstart','mousedown','keydown'].forEach(function(ev){ sc.addEventListener(ev, manual, {passive:true}); });
+
+  var im = document.images[0];
+  if(im.complete) run(); else { im.addEventListener('load', run); im.addEventListener('error', run); }
+})();
+</script>
+</body>
+</html>
