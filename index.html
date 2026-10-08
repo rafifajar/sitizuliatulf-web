@@ -1221,7 +1221,10 @@
           var gap = parseFloat(getComputedStyle(media).rowGap) || 24;
           var natural = 0;
           if(window.innerWidth > 720 && prev){ natural = (prev.offsetTop + prev.offsetHeight + (parseFloat(getComputedStyle(prev).marginBottom) || 0)) - col.offsetTop; }
-          kids[1].style.marginTop = Math.max(0, natural - kids[0].offsetHeight - gap) + 'px';
+          var firstP = col.querySelector('.pv-text'), topOff = 0;
+          if(window.innerWidth > 720 && firstP){ topOff = Math.max(0, firstP.offsetTop - col.offsetTop); }
+          kids[0].style.marginTop = topOff + 'px';
+          kids[1].style.marginTop = Math.max(0, natural - topOff - kids[0].offsetHeight - gap) + 'px';
         }
         return;
       }
