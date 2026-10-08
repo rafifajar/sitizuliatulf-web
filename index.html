@@ -465,6 +465,9 @@
   .p3-rc-n{flex-shrink:0; width:36px; height:36px; border-radius:50%; background:#fff2ea; color:var(--accent); font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;}
   .p3-rc-item strong{display:block; font-size:17px; font-weight:800; color:var(--ink);}
   .p3-rc-item p{margin:6px 0 0; font-size:16px; line-height:1.6; color:var(--muted);}
+  .td-pan{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:30% 50%; pointer-events:none; animation:tdPan 20s ease-in-out infinite alternate; will-change:object-position, transform;}
+  @keyframes tdPan{from{object-position:6% 50%; transform:scale(1.03);} to{object-position:94% 50%; transform:scale(1.1);}}
+  @media (prefers-reduced-motion:reduce){ .td-pan{animation:none; object-position:62% 50%;} }
   .pt2-panel{position:relative; min-width:0; border-radius:18px; background:radial-gradient(ellipse 54% 62% at 50% 54%, rgba(255,90,45,.08), transparent 72%), #F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy{flex:1 1 0; min-height:0; border-radius:18px; background:#F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy + .pt2-dummy{margin-top:18px;}
@@ -659,7 +662,7 @@
         </div>
       </div>
       <div class="pt-grid">
-        <div class="pt2-panel"><span class="pt2-ph">Dummy image</span></div>
+        <div class="pt2-panel" style="overflow:hidden;"><img class="td-pan" src="tokodistributor-supplier.jpg" alt="Tokodistributor supplier web: connecting a store to Tokopedia and TikTok Shop" loading="lazy"></div>
         <div class="phone-stack">
           <div class="pt2-dummy"><span class="pt2-ph">Dummy image</span></div>
           <div class="pt2-dummy"><span class="pt2-ph">Dummy image</span></div>
