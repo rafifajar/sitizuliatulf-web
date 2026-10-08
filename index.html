@@ -865,7 +865,7 @@
           </div>
         </div>
       </div>
-      <div class="pv-project-media">
+      <div class="pv-project-media" data-align="pill">
         <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:4/3;"><span>Dummy image 15</span></div>
         <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:16/10;"><span>Dummy image 16</span></div>
         <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:1/1;"><span>Dummy image 17</span></div>
@@ -1209,6 +1209,11 @@
       if(!media || !sticky || !isShown(media)) return;
       var col = sticky.parentNode, prev = sticky.previousElementSibling, offset = 0;
       if(window.innerWidth > 720 && prev){ offset = prev.getBoundingClientRect().bottom - col.getBoundingClientRect().top; }
+      if(media.getAttribute('data-align') === 'pill'){
+        var pillEl = sticky.querySelector('.pv-meta-label');
+        media.style.marginTop = (window.innerWidth > 720 && pillEl ? (parseFloat(getComputedStyle(pillEl).marginTop) || 0) : 0) + 'px';
+        return;
+      }
       if(media.getAttribute('data-align') === 'second'){
         media.style.marginTop = '';
         var kids = media.children;
