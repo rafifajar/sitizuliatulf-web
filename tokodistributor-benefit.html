@@ -4,70 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tokodistributor Premium Reseller page</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-:root{ --ink:#14131a; --muted:#5f6472; --line:#e3e5ea; --bg:#F1F4FB; --red:#e0261f; --font:"Inter",-apple-system,"SF Pro Text","Segoe UI",Roboto,sans-serif; }
-html,body{height:100%; margin:0; overflow:hidden; background:var(--bg); font-family:var(--font); color:var(--ink);}
+:root{ --bg:#F1F4FB; }
+html,body{height:100%; margin:0; overflow:hidden; background:var(--bg);}
 body{display:grid; place-items:center;}
 .wrap{position:relative; flex:none;}
 .scene{position:absolute; left:0; top:0; width:520px; height:600px; transform-origin:top left;}
 
-.phone{position:absolute; left:30px; top:30px; width:212px; height:540px; box-sizing:border-box; padding:6px; border-radius:30px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
-.screen{width:200px; height:528px; border-radius:24px; overflow-x:hidden; overflow-y:auto; background:#fff; scrollbar-width:none;}
+.phone{position:absolute; left:124px; top:20px; width:272px; height:560px; box-sizing:border-box; padding:6px; border-radius:34px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
+.screen{width:260px; height:548px; border-radius:28px; overflow-x:hidden; overflow-y:auto; background:#fff; scrollbar-width:none;}
 .screen::-webkit-scrollbar{display:none;}
-.shot{position:relative; width:200px;}
-.shot img{display:block; width:200px; height:auto;}
-.hl{position:absolute; left:2px; right:2px; border-radius:8px; border:1.5px solid rgba(224,38,31,.85); background:rgba(224,38,31,.07); pointer-events:none; transition:background .3s ease, border-color .3s ease;}
-.hl em{position:absolute; top:-8px; right:6px; padding:2px 6px; border-radius:99px; background:var(--red); color:#fff; font-size:8px; font-weight:700; font-style:normal; letter-spacing:.05em;}
-.hl.on{border-color:#e0261f; background:rgba(224,38,31,.13); animation:hlpulse 1.6s ease-in-out infinite;}
-@keyframes hlpulse{0%,100%{box-shadow:0 0 0 0 rgba(224,38,31,.4);} 50%{box-shadow:0 0 0 5px rgba(224,38,31,0);}}
-
-.side{position:absolute; left:268px; top:30px; width:228px; height:540px;}
-.hint{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center; font-size:12px; font-weight:500; color:var(--muted); padding:0 8px; transition:opacity .35s ease;}
-.hint.off{opacity:0;}
-.note{position:absolute; left:0; right:0; top:50%; margin-top:-120px; opacity:0; transform:translateX(10px); transition:opacity .35s ease, transform .35s ease; pointer-events:none;}
-.note.on{opacity:1; transform:none;}
-.tag{display:inline-block; padding:7px 14px; border-radius:6px; background:var(--red); color:#fff; font-size:13px; font-weight:700; letter-spacing:.01em;}
-.card{box-sizing:border-box; margin-top:8px; padding:12px 14px; border-radius:10px; background:#e3e9fc; border:1px solid #c7d3f6; font-size:11.5px; line-height:1.5; color:#2b3a67;}
-.card ul{margin:0; padding-left:16px;}
-.card li{margin:0 0 6px;}
-.card li:last-child{margin-bottom:0;}
-.card b{color:#1d2a52; font-weight:700;}
-.conn{position:absolute; left:-30px; top:50%; width:26px; height:0; border-top:2px dashed var(--red); opacity:0; transition:opacity .35s ease;}
-.conn.on{opacity:1;}
+.screen img{display:block; width:260px; height:auto;}
 </style>
 </head>
 <body>
 <div class="wrap" id="wrap">
   <div class="scene" id="scene">
-    <div class="phone"><div class="screen" id="sc"><div class="shot">
+    <div class="phone"><div class="screen" id="sc">
       <img src="tokodistributor-benefit.jpg" alt="Tokodistributor Daftar Reseller Premium page">
-      <div class="hl" id="hl" style="top:calc(998 / 1974 * 100%); height:calc(194 / 1974 * 100%);"><em>DETAIL</em></div>
-    </div></div></div>
-
-    <div class="side">
-      <div class="hint" id="hint">Scroll through the Premium Reseller page to explore the benefit banners</div>
-      <span class="conn" id="conn"></span>
-      <div class="note" id="note">
-        <span class="tag">Voucher Banner</span>
-        <div class="card"><ul>
-          <li><b>Illustration:</b> the voucher with its amount.</li>
-          <li><b>Title:</b> Voucher Ongkir 600 Ribu!</li>
-          <li><b>Description:</b> a voucher exclusively for COD (Cash on Delivery) shipping costs.</li>
-          <li><b>CTA:</b> “Pelajari Lebih Lanjut” to learn more.</li>
-        </ul></div>
-      </div>
-    </div>
+    </div></div>
   </div>
 </div>
 
 <script>
 (function(){
-  var $ = function(id){ return document.getElementById(id); };
-  var sc = $('sc'), note = $('note'), hint = $('hint'), hl = $('hl'), conn = $('conn');
-  var wrap = $('wrap'), scene = $('scene');
+  var sc = document.getElementById('sc'), wrap = document.getElementById('wrap'), scene = document.getElementById('scene');
 
   function fit(){
     var k = Math.min(window.innerWidth / 520, window.innerHeight / 600, 1);
@@ -78,18 +39,8 @@ body{display:grid; place-items:center;}
   window.addEventListener('resize', fit);
   fit();
 
+  var token = 0;
   function maxS(){ return Math.max(0, sc.scrollHeight - sc.clientHeight); }
-  function target(){ var k = sc.clientWidth / 438; return Math.min(maxS(), 1095 * k - sc.clientHeight / 2); }
-  function sync(){
-    var on = Math.abs(sc.scrollTop - target()) < 130;
-    note.classList.toggle('on', on);
-    conn.classList.toggle('on', on);
-    hint.classList.toggle('off', on);
-    hl.classList.toggle('on', on);
-  }
-  sc.addEventListener('scroll', sync, {passive:true});
-
-  var token = 0, auto = true;
   function wait(ms){
     var my = token;
     return new Promise(function(res, rej){ setTimeout(function(){ my === token ? res() : rej('x'); }, ms); });
@@ -110,17 +61,24 @@ body{display:grid; place-items:center;}
   async function run(){
     token++;
     try{
-      sc.scrollTop = 0; sync();
-      while(auto){
-        await wait(1500);
-        await move(target(), 3200); await wait(4000);
-        await move(maxS(), 3000);   await wait(1400);
-        await move(0, 2800);
+      while(true){
+        await wait(1400);
+        await move(maxS(), Math.max(6000, maxS() * 11));
+        await wait(1600);
+        await move(0, 2600);
       }
     }catch(e){}
   }
-  function manual(){ if(!auto) return; auto = false; token++; }
-  ['wheel','touchstart','mousedown'].forEach(function(ev){ sc.addEventListener(ev, manual, {passive:true}); });
+
+  // viewers can take over by scrolling; the tour resumes after a few idle seconds
+  var idle = null;
+  function manual(){
+    token++;
+    clearTimeout(idle);
+    idle = setTimeout(run, 5000);
+  }
+  ['wheel','touchstart','mousedown','keydown'].forEach(function(ev){ sc.addEventListener(ev, manual, {passive:true}); });
+
   var im = document.images[0];
   if(im.complete) run(); else { im.addEventListener('load', run); im.addEventListener('error', run); }
 })();
