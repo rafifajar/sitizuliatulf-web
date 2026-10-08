@@ -724,7 +724,7 @@
         </div>
         </div>
       </div>
-      <div class="pv-project-media">
+      <div class="pv-project-media" data-align="second" data-flush="1">
         <div class="pv-shot pv-scroll-shot reveal" data-step="1" id="pvShotMain">
           <span class="pv-live-badge"><span class="pv-live-dot"></span>Before</span>
           <div class="pv-scroll-track">
@@ -1222,7 +1222,7 @@
           var natural = 0;
           if(window.innerWidth > 720 && prev){ natural = (prev.offsetTop + prev.offsetHeight + (parseFloat(getComputedStyle(prev).marginBottom) || 0)) - col.offsetTop; }
           var firstP = col.querySelector('.pv-text'), topOff = 0;
-          if(window.innerWidth > 720 && firstP){ topOff = Math.max(0, firstP.offsetTop - col.offsetTop); }
+          if(window.innerWidth > 720 && firstP && media.getAttribute('data-flush') !== '1'){ topOff = Math.max(0, firstP.offsetTop - col.offsetTop); }
           kids[0].style.marginTop = topOff + 'px';
           var stTitle = sticky.querySelector('.pv-step-title'), badge = kids[1].querySelector('.pv-live-badge'), adj = 0;
           if(window.innerWidth > 720 && stTitle && badge){
