@@ -236,7 +236,10 @@
   #project3View .p3-out-card{padding:26px 28px; border:1px solid var(--line); border-radius:20px; background:#fff;}
   #project3View .p3-out-card h3{margin:0 0 14px; font-size:22px; font-weight:800; letter-spacing:-.01em; color:var(--ink);}
   #project3View .p3-out-card .pv-text{font-size:17px; line-height:1.7; margin-bottom:14px;}
-  #project3View .p3-learn{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:18px;}
+  #project3View .p3-learn{display:grid; grid-template-columns:1fr; gap:10px; margin-top:18px;}
+  #project3View .p3-note{margin-top:40px; padding:16px 20px; border-radius:14px; background:#f3f4f7;}
+  #project3View .p3-note b{display:block; margin-bottom:6px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#8a8d98;}
+  #project3View .p3-note p{margin:0; font-size:13px; line-height:1.6; color:var(--muted);}
   @media (max-width:900px){ #project3View .p3-out-grid, #project3View .p3-learn{grid-template-columns:1fr;} }
   #project3View .p3-rc{flex-direction:row; align-items:stretch; gap:14px;}
   #project3View .p3-rc-item{flex:1 1 0; min-width:0;}
@@ -1123,18 +1126,19 @@
           <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>Design completed and validated with IT, Business, and Marketing teams</div>
           <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>Real-time product and stock sync between Tokodistributor and TikTok Seller</div>
         </div>
-<div class="p3-out-card reveal">
-          <h3>External Factor</h3>
-          <p class="pv-text">Before launch, TikTok Seller changed its policy in Indonesia and restricted third-party product synchronization.</p>
-          <p class="pv-text" style="margin-bottom:0;">The project was paused despite passing design validation, a valuable lesson in platform policy boundaries.</p>
+        <div>
+          <div class="pv-meta-label pv-worked p3-sec" style="margin-top:0;">What I Learned</div>
+          <div class="p3-learn reveal">
+          <div class="p3-rc-item"><span class="p3-rc-n">01</span><div><p style="margin:0; color:var(--ink);">Responding to third-party policy changes while staying compliant.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">02</span><div><p style="margin:0; color:var(--ink);">Mapping risks early for external dependencies.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">03</span><div><p style="margin:0; color:var(--ink);">Designing for both supplier and reseller workflows.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">04</span><div><p style="margin:0; color:var(--ink);">Communicating impact and external limits clearly to stakeholders.</p></div></div>
+          </div>
         </div>
       </div>
-      <div class="pv-meta-label pv-worked p3-sec">What I Learned</div>
-      <div class="p3-learn reveal">
-        <div class="p3-rc-item"><span class="p3-rc-n">01</span><div><p style="margin:0; color:var(--ink);">Responding to third-party policy changes while staying compliant.</p></div></div>
-        <div class="p3-rc-item"><span class="p3-rc-n">02</span><div><p style="margin:0; color:var(--ink);">Mapping risks early for external dependencies.</p></div></div>
-        <div class="p3-rc-item"><span class="p3-rc-n">03</span><div><p style="margin:0; color:var(--ink);">Designing for both supplier and reseller workflows.</p></div></div>
-        <div class="p3-rc-item"><span class="p3-rc-n">04</span><div><p style="margin:0; color:var(--ink);">Communicating impact and external limits clearly to stakeholders.</p></div></div>
+      <div class="p3-note reveal">
+        <b>External factor</b>
+        <p>Before launch, TikTok Seller changed its policy in Indonesia and restricted third-party product synchronization. The project was paused despite passing design validation, a valuable lesson in platform policy boundaries.</p>
       </div>
     </div>
   </div>
