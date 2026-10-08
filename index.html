@@ -465,9 +465,9 @@
   .p3-rc-n{flex-shrink:0; width:36px; height:36px; border-radius:50%; background:#fff2ea; color:var(--accent); font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center;}
   .p3-rc-item strong{display:block; font-size:17px; font-weight:800; color:var(--ink);}
   .p3-rc-item p{margin:6px 0 0; font-size:16px; line-height:1.6; color:var(--muted);}
-  .td-pan{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:55% 50%; transform-origin:57% 52%; pointer-events:none; animation:tdFocus 16s ease-in-out infinite; will-change:transform;}
-  @keyframes tdFocus{0%{transform:scale(1.02) translate3d(0,0,0);} 45%{transform:scale(1.5) translate3d(-1.5%,-1%,0);} 60%{transform:scale(1.5) translate3d(-1.5%,-1%,0);} 100%{transform:scale(1.02) translate3d(0,0,0);}}
-  @media (prefers-reduced-motion:reduce){ .td-pan{animation:none; transform:scale(1.05);} }
+  .td-scroll{object-position:50% 0%; animation:tdScroll 24s ease-in-out infinite alternate;}
+  @keyframes tdScroll{from{object-position:50% 0%;} to{object-position:50% 100%;}}
+  @media (prefers-reduced-motion:reduce){ .td-scroll{animation:none;} }
   .pt2-panel{position:relative; min-width:0; border-radius:18px; background:radial-gradient(ellipse 54% 62% at 50% 54%, rgba(255,90,45,.08), transparent 72%), #F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy{flex:1 1 0; min-height:0; border-radius:18px; background:#F1F4FB; display:flex; align-items:center; justify-content:center;}
   .pt2-dummy + .pt2-dummy{margin-top:18px;}
@@ -662,7 +662,17 @@
         </div>
       </div>
       <div class="pt-grid">
-        <div class="pt2-panel" style="overflow:hidden;"><img class="td-pan" src="tokodistributor-supplier.jpg" alt="Tokodistributor supplier web: connecting a store to Tokopedia and TikTok Shop" loading="lazy"></div>
+        <div class="pt-cell">
+          <div class="pt-stage" aria-hidden="true">
+            <span class="pt-ring"></span>
+            <span class="pt-spark s1">&#10022;</span><span class="pt-spark s2">&#10022;</span><span class="pt-spark s3">&#10022;</span>
+            <div class="pt-phone"><div class="pt-phone-in"><img class="td-scroll" src="tokodistributor-benefit.jpg" alt="" loading="lazy"></div></div>
+            <div class="pt-card"><i class="pt-ic">&#8599;</i><div><b>+20% followed up to join Premium</b><span>Premium Reseller Conversion</span></div></div>
+            <div class="pt-card"><i class="pt-ic">&#8644;</i><div><b>Real-time stock sync</b><span>Tokodistributor &#8644; TikTok Seller</span></div></div>
+            <div class="pt-card"><i class="pt-ic">&#8599;</i><div><b>+17% Premium Reseller interest</b><span>in 3 months</span></div></div>
+            <div class="pt-card"><i class="pt-ic">&#9635;</i><div><b>3 benefit banners</b><span>Premium Reseller Guide</span></div></div>
+          </div>
+        </div>
         <div class="phone-stack">
           <div class="pt2-dummy"><span class="pt2-ph">Dummy image</span></div>
           <div class="pt2-dummy"><span class="pt2-ph">Dummy image</span></div>
@@ -1354,8 +1364,7 @@
     document.addEventListener('visibilitychange', function(){ if(document.hidden){ stop(); } else { start(); } });
   })();
 
-  (function(){
-    var visual = document.querySelector('.pt-cell');
+  Array.prototype.slice.call(document.querySelectorAll('.pt-cell')).forEach(function(visual){
     var ring = visual && visual.querySelector('.pt-ring');
     var cards = visual ? Array.prototype.slice.call(visual.querySelectorAll('.pt-card')) : [];
     if(!ring || !cards.length) return;
@@ -1393,7 +1402,7 @@
     }
     document.addEventListener('visibilitychange', function(){ if(document.hidden){ halt(); } else { run(); } });
     run();
-  })();
+  });
 
   (function(){
     var screens = document.querySelectorAll('.rh-screen');
