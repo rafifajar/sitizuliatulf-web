@@ -14,17 +14,17 @@ body{display:grid; place-items:center;}
 .wrap{position:relative; flex:none;}
 .scene{position:absolute; left:0; top:0; width:520px; height:600px; transform-origin:top left;}
 
-.phone{position:absolute; left:40px; top:44px; width:198px; height:520px; box-sizing:border-box; padding:6px; border-radius:30px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
-.screen{width:186px; height:508px; border-radius:24px; overflow:hidden; background:#fff; scrollbar-width:none;}
+.phone{position:absolute; left:30px; top:30px; width:212px; height:540px; box-sizing:border-box; padding:6px; border-radius:30px; background:#14131a; box-shadow:0 0 0 1px #2a2833;}
+.screen{width:200px; height:528px; border-radius:24px; overflow:hidden; background:#fff; scrollbar-width:none;}
 .screen::-webkit-scrollbar{display:none;}
-.shot{position:relative; width:186px;}
-.shot img{display:block; width:186px; height:auto;}
+.shot{position:relative; width:200px;}
+.shot img{display:block; width:200px; height:auto;}
 .hl{position:absolute; left:2px; right:2px; border-radius:8px; border:1.5px solid rgba(224,38,31,.85); background:rgba(224,38,31,.07); pointer-events:none; transition:background .3s ease, border-color .3s ease;}
 .hl em{position:absolute; top:-8px; right:6px; padding:2px 6px; border-radius:99px; background:var(--red); color:#fff; font-size:8px; font-weight:700; font-style:normal; letter-spacing:.05em;}
 .hl.on{border-color:#e0261f; background:rgba(224,38,31,.13); animation:hlpulse 1.6s ease-in-out infinite;}
 @keyframes hlpulse{0%,100%{box-shadow:0 0 0 0 rgba(224,38,31,.4);} 50%{box-shadow:0 0 0 5px rgba(224,38,31,0);}}
 
-.side{position:absolute; left:268px; top:44px; width:228px; height:520px;}
+.side{position:absolute; left:268px; top:30px; width:228px; height:540px;}
 .hint{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); text-align:center; font-size:12px; font-weight:500; color:var(--muted); padding:0 8px; transition:opacity .35s ease;}
 .hint.off{opacity:0;}
 .note{position:absolute; left:0; right:0; top:50%; margin-top:-120px; opacity:0; transform:translateX(10px); transition:opacity .35s ease, transform .35s ease; pointer-events:none;}
@@ -43,8 +43,8 @@ body{display:grid; place-items:center;}
 <div class="wrap" id="wrap">
   <div class="scene" id="scene">
     <div class="phone"><div class="screen" id="sc"><div class="shot">
-      <img src="tokodistributor-benefit.png" alt="Tokodistributor Daftar Reseller Premium page">
-      <div class="hl" id="hl" style="top:calc(568 / 1426 * 100%); height:calc(178 / 1426 * 100%);"><em>DETAIL</em></div>
+      <img src="tokodistributor-benefit.jpg" alt="Tokodistributor Daftar Reseller Premium page">
+      <div class="hl" id="hl" style="top:calc(998 / 1974 * 100%); height:calc(194 / 1974 * 100%);"><em>DETAIL</em></div>
     </div></div></div>
 
     <div class="side">
@@ -79,7 +79,7 @@ body{display:grid; place-items:center;}
   fit();
 
   function maxS(){ return Math.max(0, sc.scrollHeight - sc.clientHeight); }
-  function target(){ var k = sc.clientWidth / 186; return Math.min(maxS(), 656 * k - sc.clientHeight / 2); }
+  function target(){ var k = sc.clientWidth / 438; return Math.min(maxS(), 1095 * k - sc.clientHeight / 2); }
   function sync(){
     var on = Math.abs(sc.scrollTop - target()) < 130;
     note.classList.toggle('on', on);
