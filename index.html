@@ -1206,8 +1206,9 @@
         var kids = media.children;
         if(kids.length > 1){
           var gap = parseFloat(getComputedStyle(media).rowGap) || 24;
-          var mb = prev ? (parseFloat(getComputedStyle(prev).marginBottom) || 0) : 0;
-          kids[1].style.marginTop = Math.max(0, offset + mb - kids[0].offsetHeight - gap) + 'px';
+          var natural = 0;
+          if(window.innerWidth > 720 && prev){ natural = (prev.offsetTop + prev.offsetHeight + (parseFloat(getComputedStyle(prev).marginBottom) || 0)) - col.offsetTop; }
+          kids[1].style.marginTop = Math.max(0, natural - kids[0].offsetHeight - gap) + 'px';
         }
         return;
       }
