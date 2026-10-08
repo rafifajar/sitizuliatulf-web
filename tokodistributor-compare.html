@@ -23,6 +23,12 @@ body{display:grid; place-items:center;}
 .screen{width:184px; height:384px; border-radius:24px; overflow:hidden; background:#fff; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
 .screen::-webkit-scrollbar{display:none;}
 .screen img{display:block; width:184px; height:auto;}
+.shot{position:relative; width:184px;}
+.hl{position:absolute; left:1px; right:1px; border-radius:7px; border:1.5px solid rgba(224,38,31,.85); background:rgba(224,38,31,.07); pointer-events:none; transition:background .3s ease, border-color .3s ease;}
+.hl em{position:absolute; top:-8px; right:6px; padding:2px 6px; border-radius:99px; background:var(--red); color:#fff; font-size:8px; font-weight:700; font-style:normal; letter-spacing:.05em;}
+.hl.on{border-color:#e0261f; background:rgba(224,38,31,.13); animation:hlpulse 1.6s ease-in-out infinite;}
+@keyframes hlpulse{0%,100%{box-shadow:0 0 0 0 rgba(224,38,31,.4);} 50%{box-shadow:0 0 0 5px rgba(224,38,31,0);}}
+
 
 .notes{position:absolute; left:24px; top:470px; width:472px; height:118px;}
 .note{position:absolute; inset:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s ease; pointer-events:none;}
@@ -45,7 +51,11 @@ body{display:grid; place-items:center;}
     </div>
     <div class="col r">
       <span class="badge after"><i></i>After</span>
-      <div class="phone"><div class="screen" id="sr"><img src="tokodistributor-after.png" alt="Tokodistributor home after the redesign"></div></div>
+      <div class="phone"><div class="screen" id="sr"><div class="shot">
+        <img src="tokodistributor-after.png" alt="Tokodistributor home after the redesign">
+        <div class="hl" id="hlA" style="top:calc(693 / 1517 * 100%); height:calc(77 / 1517 * 100%);"><em>NEW</em></div>
+        <div class="hl" id="hlB" style="top:calc(1105 / 1517 * 100%); height:calc(72 / 1517 * 100%);"><em>NEW</em></div>
+      </div></div></div>
     </div>
 
     <div class="notes">
@@ -101,6 +111,8 @@ body{display:grid; place-items:center;}
     noteA.classList.toggle('on', onA);
     noteB.classList.toggle('on', onB && !onA);
     hint.classList.toggle('off', onA || onB);
+    $('hlA').classList.toggle('on', onA);
+    $('hlB').classList.toggle('on', onB && !onA);
   }
   sr.addEventListener('scroll', syncNotes, {passive:true});
 
