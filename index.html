@@ -250,6 +250,9 @@
   #project2View .pv-project, #project3View .pv-project{padding:0;}
   #projectView .pv-project{max-width:1160px; margin-left:auto; margin-right:auto; padding:0 24px; box-sizing:border-box;}
   #projectView .pv-project-text{padding-left:0;}
+  #projectView .p3-proc{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:18px; align-items:stretch;}
+  #projectView .p3-proc .p3-rc-item{margin:0;}
+  @media (max-width:900px){ #projectView .p3-proc{grid-template-columns:1fr;} }
   #projectView .pv-project-intro .pv-text{font-size:18px; line-height:1.8; margin-bottom:20px;}
   #project2View .pv-project-text, #project3View .pv-project-text{padding-left:0;}
   .pv-project-title{font-size:clamp(28px,3.4vw,44px); font-weight:800; letter-spacing:-.02em; line-height:1.1; margin:0 0 32px;}
@@ -869,37 +872,51 @@
         </div>
       </div>
       <div class="pv-shot pv-shot-dummy reveal" style="aspect-ratio:4/3; align-self:start; margin-top:104px;"><span>Dummy image 14</span></div>
+      <div class="p3-process" style="grid-column:1 / -1;">
+        <div class="pv-meta-label pv-worked p3-sec" style="margin-top:0;">Process</div>
+        <div class="p3-proc reveal">
+          <div class="p3-rc-item"><span class="p3-rc-n">01</span><div><strong>Research with the PM from day one</strong><p>Validated the direction together, got approval from the Head of Product, and mapped Malaysia-specific edge cases and new regulatory requirements.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">02</span><div><strong>Usability testing with 6 POS agents on the previous form</strong><p>Agents wanted speed, and copy-paste and OCR helped them fill in data. They rarely chose vouchers because it meant lower commission.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">03</span><div><strong>Delivered end-to-end through a long approval process</strong><p>From hi-fi to production, with reusable components, documentation, and edge/negative cases.</p></div></div>
+        </div>
+      </div>
       <div class="pv-project-text">
         <div class="pv-sticky">
           <div class="pv-meta-label pv-worked">What I worked on</div>
           <ol class="pv-stepper">
             <li class="pv-step active" data-go="1">
-              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Reduce Repetitive Input</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Enabled agents to save and reuse complete sender and shipment details for recurring bookings.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">01</span><span class="pv-step-title">Reduce repetitive input</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Shipment history and recipient reuse for recurring senders.</p></div></div>
             </li>
             <li class="pv-step" data-go="2">
-              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Clarify Shipment Requirements</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Separated domestic and international forms to make the shipment context and required information more visible.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">02</span><span class="pv-step-title">Auto-fill from documents</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">OCR reads shipping documents and fills recipient, item, dimension, weight, commodity, and value.</p></div></div>
             </li>
             <li class="pv-step" data-go="3">
-              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Speed Up Form Completion</span></div>
-              <div class="pv-step-body"><div><p class="pv-step-desc">Reworked the sender and recipient layout and simplified address input for easier copy-paste from sources like WhatsApp.</p></div></div>
+              <div class="pv-step-head"><span class="pv-step-num">03</span><span class="pv-step-title">Clarify international requirements</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Separate domestic and international flows, plus a per-destination document stepper for new staff.</p></div></div>
+            </li>
+            <li class="pv-step" data-go="4">
+              <div class="pv-step-head"><span class="pv-step-num">04</span><span class="pv-step-title">Speed up form completion</span></div>
+              <div class="pv-step-body"><div><p class="pv-step-desc">Reworked layout and simplified address input for pasting from WhatsApp.</p></div></div>
             </li>
           </ol>
-          <div class="pv-impact reveal">
-            <div class="pv-worked">Impact</div>
-            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>30% Faster Recurring Bookings</div>
-            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>25% Clearer Shipment Requirements</div>
-            <div class="pv-impact-item"><span class="pv-impact-ic">&#8599;</span>20% Faster Address Input</div>
-          </div>
-        </div>
+                  </div>
       </div>
       <div class="pv-project-media" data-align="pill">
         <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:4/3;"><span>Dummy image 15</span></div>
-        <div class="pv-shot pv-shot-dummy reveal" data-step="1" style="aspect-ratio:16/10;"><span>Dummy image 16</span></div>
-        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:1/1;"><span>Dummy image 17</span></div>
-        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:4/3;"><span>Dummy image 18</span></div>
-        <div class="pv-shot pv-shot-dummy reveal" data-step="3" style="aspect-ratio:16/10;"><span>Dummy image 19</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="2" style="aspect-ratio:16/10;"><span>Dummy image 16</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="3" style="aspect-ratio:1/1;"><span>Dummy image 17</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="3" style="aspect-ratio:4/3;"><span>Dummy image 18</span></div>
+        <div class="pv-shot pv-shot-dummy reveal" data-step="4" style="aspect-ratio:16/10;"><span>Dummy image 19</span></div>
+      </div>
+      <div class="p3-impactrow" style="grid-column:1 / -1;">
+        <div class="pv-meta-label pv-worked p3-sec" style="margin-top:0;">Impact</div>
+        <div class="p3-proc reveal">
+          <div class="p3-rc-item"><span class="p3-rc-n">&#8599;</span><div><p style="margin:0; color:var(--ink);">Launched to support the Malaysia expansion, with separate domestic and international flows.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">&#8599;</span><div><p style="margin:0; color:var(--ink);">Research with 6 POS agents showed speed was the priority, and the new flow answers it with copy-paste, OCR, and a document stepper for new staff.</p></div></div>
+          <div class="p3-rc-item"><span class="p3-rc-n">&#8599;</span><div><p style="margin:0; color:var(--ink);">Metrics are being tracked with the PM post-launch.</p></div></div>
+        </div>
       </div>
 </div>
 </div>
