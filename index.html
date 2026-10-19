@@ -250,6 +250,20 @@
   #project2View .pv-project, #project3View .pv-project{padding:0;}
   #projectView .pv-project{max-width:1160px; margin-left:auto; margin-right:auto; padding:0 24px; box-sizing:border-box;}
   #projectView .pv-project-text{padding-left:0;}
+  #projectView .imp-card{padding:16px 18px 14px; border:1px solid var(--line); border-radius:20px; background:#fff; margin-bottom:12px;}
+  #projectView .imp-top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  #projectView .imp-name{font-size:14px; font-weight:700; color:var(--ink);}
+  #projectView .imp-chip{flex:none; padding:3px 10px; border-radius:99px; background:#e6f7ee; color:#12a05c; font-size:12px; font-weight:800;}
+  #projectView .imp-vals{display:flex; align-items:baseline; gap:10px; margin-top:10px;}
+  #projectView .imp-from{font-size:16px; font-weight:600; color:#a9a6a0; text-decoration:line-through;}
+  #projectView .imp-arrow{color:#a9a6a0; font-size:15px;}
+  #projectView .imp-to{font-size:32px; font-weight:800; letter-spacing:-.02em; line-height:1; color:var(--ink);}
+  #projectView .imp-bar{position:relative; height:8px; margin-top:14px; border-radius:99px; background:#eceef2;}
+  #projectView .imp-fill{position:absolute; left:0; top:0; bottom:0; width:var(--w); border-radius:99px; background:linear-gradient(90deg,#ff8a5c,#ff5a2d);}
+  #projectView .imp-target{position:absolute; top:-4px; bottom:-4px; left:var(--t); width:2px; border-radius:2px; background:var(--ink);}
+  #projectView .imp-meta{display:flex; justify-content:space-between; gap:10px; margin-top:9px; font-size:11.5px; color:var(--muted);}
+  #projectView .imp-meta b{color:#12a05c; font-weight:700;}
+  #projectView .imp-note{margin:2px 4px 0; font-size:12.5px; line-height:1.55; color:var(--muted);}
   #projectView .p3-proc{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:18px; align-items:stretch;}
   #projectView .p3-proc .p3-rc-item{margin:0;}
   @media (max-width:900px){ #projectView .p3-proc{grid-template-columns:1fr;} }
@@ -750,9 +764,20 @@
         <p class="pv-text reveal">Together, these improvements created a more connected route experience—from understanding the route to choosing the next stop and navigating to the destination.</p>
         <div class="pv-impact reveal">
           <div class="pv-worked">Impact</div>
-          <div class="pv-impact-item"><span class="pv-impact-ic">↗</span>30% Reduction in time to identify the next stop</div>
-          <div class="pv-impact-item"><span class="pv-impact-ic">↗</span>25% Reduction in manual map checking</div>
-          <div class="pv-impact-item"><span class="pv-impact-ic">↗</span>20% Reduction in time to start navigation</div>
+          <div class="imp-card">
+            <div class="imp-top"><span class="imp-name">&ldquo;Address not found&rdquo; cases</span><span class="imp-chip">&darr; 52%</span></div>
+            <div class="imp-vals"><span class="imp-from">2.5%</span><span class="imp-arrow">&rarr;</span><span class="imp-to">1.21%</span></div>
+            <div class="imp-bar"><i class="imp-fill" style="--w:48.4%;"></i><i class="imp-target" style="--t:60%;"></i></div>
+            <div class="imp-meta"><span>Target 1.50% &middot; <b>beat</b></span><span>Before 2.5%</span></div>
+          </div>
+          <div class="imp-card">
+            <div class="imp-top"><span class="imp-name">Courier-cancelled pickups</span><span class="imp-chip">&darr; 37%</span></div>
+            <div class="imp-vals"><span class="imp-from">7.6%</span><span class="imp-arrow">&rarr;</span><span class="imp-to">4.8%</span></div>
+            <div class="imp-bar"><i class="imp-fill" style="--w:63.2%;"></i><i class="imp-target" style="--t:92.1%;"></i></div>
+            <div class="imp-meta"><span>Target 7% &middot; <b>beat</b></span><span>Before 7.6%</span></div>
+          </div>
+          <p class="imp-note">Driven by geolocation route recommendations and saved customer locations in the courier app.</p>
+        </div>
         </div>
         </div>
       </div>
