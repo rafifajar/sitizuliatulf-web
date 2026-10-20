@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rona — AI Personal Color & Style Studio</title>
+  <meta name="description" content="Analisis personal color di perangkatmu, lalu coba warna makeup, baju, hijab, rambut, dan aksesori langsung pada wajah dan avatar 3D.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  } }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="Rona, beranda">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">Rona</span><span class="brand-sub">Color & Style Studio</span>
+    </a>
+    <nav class="flow" aria-label="Alur">
+      <a href="#/scan" data-step="scan"><i>01</i>Pindai</a>
+      <a href="#/result" data-step="result"><i>02</i>Hasil</a>
+      <a href="#/studio" data-step="studio"><i>03</i>Studio</a>
+    </nav>
+    <div class="topbar-profile" id="topProfile"></div>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="view" id="view-home" data-view="home">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="spark"></span>AI Personal Color &amp; Style Studio</p>
+          <h1>Temukan warna yang membuat wajahmu <em>bercahaya</em>.</h1>
+          <p class="lead">Pindai wajahmu, pahami undertone dan season-mu, lalu coba langsung warna makeup, baju, hijab, rambut, dan kacamata pada wajah, foto, dan avatar 3D-mu.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#/scan">Mulai analisis</a>
+            <button class="btn btn-ghost" data-action="manual">Jelajahi tanpa foto</button>
+          </div>
+          <ul class="trust">
+            <li>Diproses di perangkatmu</li><li>Foto tidak diunggah</li><li>Gratis, tanpa akun</li>
+          </ul>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card" id="heroFigure"></div>
+          <div class="hero-swatches" id="heroSwatches" role="group" aria-label="Coba warna hijab"></div>
+          <div class="hero-readout" id="heroReadout"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2>Dari pindai sampai gaya, dalam satu alur</h2></div>
+        <ol class="steps">
+          <li><i>01</i><h3>Pindai</h3><p>Kamera atau unggah foto, dengan panduan cahaya dan posisi wajah secara langsung.</p></li>
+          <li><i>02</i><h3>Analisis</h3><p>Warna kulit dari dahi, pipi, dan dagu diukur untuk memperkirakan undertone, kedalaman, dan kejernihan.</p></li>
+          <li><i>03</i><h3>Hasil</h3><p>Season, tingkat keyakinan, palet terbaik, warna yang perlu diuji, dan efeknya pada wajah.</p></li>
+          <li><i>04</i><h3>Eksplorasi</h3><p>Coba, bandingkan, dan lihat before–after pada ilustrasi, fotomu, atau avatar 3D.</p></li>
+        </ol>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2>Empat season, satu titik awal</h2><p>Panduan visual awal. Warna yang benar-benar cocok disesuaikan dengan hasil analisismu.</p></div>
+        <div class="season-grid" id="seasonGrid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2>Lebih dari palet statis</h2></div>
+        <div class="feature-grid">
+          <article><h3>Try-on real-time</h3><p>Pilih warna dan langsung lihat pada wajah. Makeup, baju, hijab, rambut, kacamata, dan perhiasan.</p></article>
+          <article><h3>Before &amp; after</h3><p>Geser pembatas untuk membandingkan warna netral atau warna yang kurang cocok dengan pilihanmu.</p></article>
+          <article><h3>Bandingkan 4 warna</h3><p>Lihat empat warna berdampingan, lengkap dengan skor kecocokan dan efeknya: segar, pucat, atau kusam.</p></article>
+          <article><h3>Avatar 3D</h3><p>Putar avatar dengan drag untuk melihat tampilanmu dari berbagai sudut.</p></article>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="honest">
+          <h2>Jujur soal batasan</h2>
+          <p>Analisis personal color dari satu foto adalah <strong>perkiraan</strong>. Cahaya, kamera, filter, dan makeup bisa menggeser hasil. Rona menampilkan tingkat keyakinan, memberi tahu jika cahaya kurang ideal, dan menyarankan warna yang masih perlu kamu uji di dunia nyata. Simulasi warna adalah representasi visual, bukan render fotorealistik. Untuk keputusan penting, padukan dengan draping langsung bersama konsultan.</p>
+        </div>
+      </div>
+      <footer class="foot">Rona · prototipe AI Personal Color &amp; Style Studio · semua pemrosesan berjalan di browser</footer>
+    </section>
+
+    <!-- SCAN -->
+    <section class="view" id="view-scan" data-view="scan" hidden>
+      <div class="scan-layout">
+        <div class="scan-main">
+          <div class="scan-step" data-scan="choose">
+            <p class="eyebrow">Langkah 1 · Pindai</p>
+            <h2 class="title">Bagaimana kamu ingin memindai?</h2>
+            <div class="choice-grid">
+              <button class="choice" data-action="camera">
+                <span class="choice-ic ic-camera" aria-hidden="true"></span>
+                <strong>Gunakan kamera</strong><span>Panduan cahaya dan posisi wajah secara langsung.</span>
+              </button>
+              <label class="choice" for="fileInput" id="dropzone">
+                <span class="choice-ic ic-upload" aria-hidden="true"></span>
+                <strong>Unggah foto</strong><span>Klik atau tarik foto ke sini. JPG atau PNG.</span>
+              </label>
+              <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+            <button class="link" data-action="manual">Tidak ingin memakai foto? Pilih warna kulit secara manual</button>
+          </div>
+
+          <div class="scan-step" data-scan="permission" hidden>
+            <p class="eyebrow">Akses kamera</p>
+            <h2 class="title">Izinkan kamera untuk memindai</h2>
+            <p class="muted">Browser akan meminta izin. Gambar diproses langsung di perangkatmu dan tidak dikirim ke server mana pun. Kamu bisa mencabut izin kapan saja.</p>
+            <div class="row gap">
+              <button class="btn btn-primary" data-action="camera-start">Izinkan kamera</button>
+              <button class="btn btn-ghost" data-action="scan-back">Kembali</button>
+            </div>
+            <p class="error" id="camError" hidden></p>
+          </div>
+
+          <div class="scan-step" data-scan="camera" hidden>
+            <div class="capture-stage" id="camStage">
+              <video id="video" playsinline muted></video>
+              <div class="oval-guide"><svg viewBox="0 0 600 750" preserveAspectRatio="xMidYMid slice"><defs><mask id="ovm"><rect width="600" height="750" fill="#fff"/><ellipse cx="300" cy="360" rx="185" ry="245" fill="#000"/></mask></defs><rect width="600" height="750" fill="rgba(20,16,14,.45)" mask="url(#ovm)"/><ellipse class="oval-line" cx="300" cy="360" rx="185" ry="245"/></svg></div>
+              <div class="light-meter" id="lightMeter"><span class="dot"></span><span class="txt">Mengukur cahaya…</span></div>
+              <div class="countdown" id="countdown" hidden></div>
+            </div>
+            <div class="row gap center">
+              <button class="btn btn-primary" data-action="capture">Ambil foto</button>
+              <button class="btn btn-ghost" data-action="scan-back">Batal</button>
+            </div>
+          </div>
+
+          <div class="scan-step" data-scan="align" hidden>
+            <p class="eyebrow">Langkah 2 · Posisikan wajah</p>
+            <h2 class="title">Paskan wajahmu di dalam oval</h2>
+            <p class="muted">Geser foto dan atur zoom sampai dahi hingga dagu mengisi oval. Analisis membaca warna dari titik-titik di dalam oval.</p>
+            <div class="capture-stage align-stage" id="alignStage">
+              <canvas id="alignCanvas" width="600" height="750"></canvas>
+              <div class="oval-guide"><svg viewBox="0 0 600 750"><defs><mask id="ovm2"><rect width="600" height="750" fill="#fff"/><ellipse cx="300" cy="360" rx="185" ry="245" fill="#000"/></mask></defs><rect width="600" height="750" fill="rgba(20,16,14,.4)" mask="url(#ovm2)"/><ellipse class="oval-line" cx="300" cy="360" rx="185" ry="245"/><g class="guide-marks" id="guideMarks"></g></svg></div>
+            </div>
+            <label class="slider-row">Zoom <input type="range" id="zoom" min="0.2" max="4" step="0.01"></label>
+            <div class="row gap center">
+              <button class="btn btn-primary" data-action="to-quiz">Lanjut</button>
+              <button class="btn btn-ghost" data-action="scan-back">Ganti foto</button>
+            </div>
+          </div>
+
+          <div class="scan-step" data-scan="quiz" hidden>
+            <p class="eyebrow">Langkah 3 · Opsional</p>
+            <h2 class="title">Empat pertanyaan singkat</h2>
+            <p class="muted">Jawabanmu dipadukan dengan foto untuk mengurangi pengaruh cahaya. Lewati jika ragu.</p>
+            <div class="quiz" id="quiz"></div>
+            <div class="row gap">
+              <button class="btn btn-primary" data-action="analyze">Analisis sekarang</button>
+              <button class="btn btn-ghost" data-action="analyze-skip">Lewati pertanyaan</button>
+            </div>
+          </div>
+
+          <div class="scan-step" data-scan="analyzing" hidden>
+            <div class="analyzing">
+              <div class="capture-stage scanning" id="scanStage"></div>
+              <ol class="scan-log" id="scanLog"></ol>
+            </div>
+          </div>
+        </div>
+
+        <aside class="guide-card">
+          <h3>Panduan foto</h3>
+          <ul class="guide-list">
+            <li><b>Cahaya alami</b>Hadap jendela di siang hari. Hindari lampu kuning atau RGB.</li>
+            <li><b>Cahaya merata</b>Kedua sisi wajah sama terang, tanpa bayangan tajam.</li>
+            <li><b>Tanpa makeup &amp; filter</b>Foundation, beauty mode, dan filter menggeser warna kulit.</li>
+            <li><b>Wajah lurus ke depan</b>Dahi sampai dagu terlihat, rambut atau poni disingkirkan.</li>
+            <li><b>Latar netral</b>Dinding putih atau abu-abu membantu koreksi white balance.</li>
+            <li><b>Jarak ±40 cm</b>Kamera sejajar mata, tidak terlalu dekat.</li>
+          </ul>
+          <p class="fine">Hasil adalah perkiraan dan bisa berbeda di kondisi cahaya lain.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section class="view" id="view-result" data-view="result" hidden>
+      <div id="resultRoot"></div>
+    </section>
+
+    <!-- STUDIO -->
+    <section class="view view-studio" id="view-studio" data-view="studio" hidden>
+      <div class="studio">
+        <div class="stage-col">
+          <div class="stage-bar">
+            <div class="seg" role="tablist" aria-label="Mode tampilan" id="viewSeg">
+              <button data-view-mode="2d" role="tab">Ilustrasi</button>
+              <button data-view-mode="photo" role="tab">Fotoku</button>
+              <button data-view-mode="3d" role="tab">Avatar 3D</button>
+            </div>
+            <div class="stage-tools">
+              <button class="tool" data-tool="ba" aria-pressed="false">Before / After</button>
+              <button class="tool" data-tool="compare" aria-pressed="false">Bandingkan</button>
+            </div>
+          </div>
+          <div class="stage" id="stage"></div>
+          <div class="harmony" id="harmony"></div>
+        </div>
+        <div class="panel-col">
+          <div class="profile-strip" id="profileStrip"></div>
+          <div class="cat-tabs" role="tablist" id="catTabs">
+            <button data-cat="makeup">Makeup</button>
+            <button data-cat="baju">Baju</button>
+            <button data-cat="hijab">Hijab</button>
+            <button data-cat="rambut">Rambut</button>
+            <button data-cat="aksesori">Aksesori</button>
+          </div>
+          <div class="panel" id="panel"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="manualModal">
+    <form method="dialog" class="modal-body" id="manualForm">
+      <h2>Jelajahi tanpa foto</h2>
+      <p class="muted">Pilih warna kulit yang paling mendekati, lalu undertone atau season jika kamu sudah tahu.</p>
+      <fieldset><legend>Warna kulit</legend><div class="skin-row" id="skinRow"></div></fieldset>
+      <fieldset><legend>Undertone</legend>
+        <div class="chips" id="undertoneRow">
+          <label><input type="radio" name="ut" value="warm">Hangat</label>
+          <label><input type="radio" name="ut" value="neutral">Netral</label>
+          <label><input type="radio" name="ut" value="cool">Sejuk</label>
+          <label><input type="radio" name="ut" value="unknown" checked>Belum tahu</label>
+        </div>
+      </fieldset>
+      <fieldset><legend>Sudah tahu season-mu? <span class="muted">(opsional)</span></legend>
+        <div class="chips" id="seasonRow">
+          <label><input type="radio" name="season" value="" checked>Hitung otomatis</label>
+          <label><input type="radio" name="season" value="spring">Spring</label>
+          <label><input type="radio" name="season" value="summer">Summer</label>
+          <label><input type="radio" name="season" value="autumn">Autumn</label>
+          <label><input type="radio" name="season" value="winter">Winter</label>
+        </div>
+      </fieldset>
+      <div class="row gap end">
+        <button class="btn btn-ghost" value="cancel">Batal</button>
+        <button class="btn btn-primary" value="ok">Buka studio</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
