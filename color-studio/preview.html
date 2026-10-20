@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rona preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Plus+Jakarta+Sans:wght@500;600&display=swap">
+<style>
+  /* Lightweight previews of the studio for the portfolio card, drawn with the same renderer as the app. ?v=phone | seasons | effects */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #F6F2EC; font: 600 12px 'Plus Jakarta Sans', system-ui, sans-serif; color: #1D1A17; }
+  svg { display: block; }
+  .phone { height: 100%; display: flex; flex-direction: column; background: radial-gradient(ellipse at 50% 35%, #FBF8F3, #ECE6DD 80%); }
+  .phone .top { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px 0; font: 600 20px 'Cormorant Garamond', serif; }
+  .phone .top span { font: 600 10px 'Plus Jakarta Sans'; padding: 4px 9px; border-radius: 99px; background: #fff; }
+  .phone .fig { flex: 1; min-height: 0; }
+  .phone .fig svg { width: 100%; height: 100%; }
+  .phone .bar { margin: 0 12px 12px; padding: 10px; border-radius: 16px; background: #fff; }
+  .phone .score { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .phone .score i { width: 14px; height: 14px; border-radius: 50%; }
+  .phone .score b { margin-left: auto; padding: 2px 8px; border-radius: 99px; background: #E3F0E7; color: #3F7D5A; font-size: 10px; }
+  .dots { display: flex; gap: 6px; justify-content: center; }
+  .dots i { width: 20px; height: 20px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); transition: box-shadow .3s; }
+  .dots i.on { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #1D1A17; }
+  .row { height: 100%; display: grid; gap: 8px; padding: 10px; box-sizing: border-box; }
+  .card { position: relative; border-radius: 14px; overflow: hidden; background: radial-gradient(ellipse at 50% 38%, #FBF8F3, #ECE6DD 80%); min-height: 0; }
+  .card svg { width: 100%; height: 100%; }
+  .card .lab { position: absolute; left: 8px; bottom: 8px; right: 8px; display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 10px; background: rgba(255,255,255,.92); }
+  .card .lab em { font: 600 15px 'Cormorant Garamond', serif; font-style: normal; }
+  .card .lab small { color: #776E66; font-weight: 500; font-size: 10px; margin-left: auto; }
+  .badge { padding: 2px 8px; border-radius: 99px; font-size: 10px; }
+  .b-segar { background: #E3F0E7; color: #3F7D5A; } .b-pucat { background: #EEF0F3; color: #5D6878; } .b-kusam { background: #F6E9DC; color: #8D5A2B; } .b-mendominasi { background: #F6E1DE; color: #B5523F; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module">
+  import { SEASONS, SEASON_ORDER } from './js/data.js';
+  import { renderFigure } from './js/render2d.js';
+  import { manualProfile } from './js/analysis.js';
+  import { evaluateColor, faceEffect } from './js/color.js';
+
+  const base = { skin: '#D9A882', hijabOn: true, hijabStyle: 'segi-empat', clothType: 'blouse', clothColor: '#F1E4EA', hairColor: '#3B3433', lip: '#D88AA0', blush: '#E8A6B8', shadow: '#B7A3C8', makeupOn: true, intensity: 0.65, glassesOn: false, lensColor: 'pink', lensShape: 'oval', frame: 'silver', earrings: 'none', necklace: false };
+  const seasonLook = (id, extra = {}) => { const S = SEASONS[id]; return { ...base, hijabColor: S.clothes[2], clothColor: S.clothes[6], lip: S.lips[0], blush: S.blush[0], shadow: S.shadow[0], ...extra }; };
+  const root = document.getElementById('root');
+  const v = new URLSearchParams(location.search).get('v') || 'phone';
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (v === 'phone') {
+    const profile = manualProfile({ skin: base.skin, season: 'summer' });
+    const colors = SEASONS.summer.clothes.slice(0, 6);
+    root.className = 'phone';
+    root.innerHTML = `<div class="top">Rona<span>Studio</span></div><div class="fig"></div>
+      <div class="bar"><div class="score"><i></i><span>Hijab</span><b></b></div><div class="dots">${colors.map((c) => `<i style="background:${c}"></i>`).join('')}</div></div>`;
+    let i = 2;
+    const paint = () => {
+      const hex = colors[i];
+      const look = { ...seasonLook('summer'), hijabColor: hex };
+      root.querySelector('.fig').innerHTML = renderFigure(look, faceEffect(hex, profile), { bg: false, viewBox: '40 70 320 470' });
+      const ev = evaluateColor(hex, profile);
+      root.querySelector('.score i').style.background = hex;
+      const b = root.querySelector('.score b'); b.textContent = ev.label; b.className = 'badge b-' + ev.effect;
+      root.querySelectorAll('.dots i').forEach((d, j) => d.classList.toggle('on', j === i));
+    };
+    paint();
+    if (!still) setInterval(() => { i = (i + 1) % colors.length; paint(); }, 2200);
+  }
+
+  if (v === 'seasons') {
+    root.className = 'row';
+    root.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    root.innerHTML = SEASON_ORDER.map((id) => `<div class="card">${renderFigure(seasonLook(id), null, { bg: false, viewBox: '30 80 340 440' }).replace('<svg ', '<svg preserveAspectRatio="xMidYMin slice" ')}
+      <div class="lab"><em>${SEASONS[id].name}</em></div></div>`).join('');
+  }
+
+  if (v === 'effects') {
+    const profile = manualProfile({ skin: base.skin, season: 'summer' });
+    root.className = 'row';
+    root.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    // the best match, one that overpowers or washes out, and one that clashes with the undertone
+    const evals = SEASON_ORDER.flatMap((id) => SEASONS[id].clothes).map((hex) => ({ hex, ...evaluateColor(hex, profile) }));
+    const worstOf = (...effects) => evals.filter((e) => effects.includes(e.effect)).sort((a, b) => a.score - b.score)[0];
+    const picks = [[...evals].sort((a, b) => b.score - a.score)[0], worstOf('mendominasi', 'pucat'), worstOf('kusam')].filter(Boolean);
+    root.innerHTML = picks.map((ev) => {
+      const hex = ev.hex;
+      return `<div class="card">${renderFigure({ ...seasonLook('summer'), hijabColor: hex, makeupOn: false }, faceEffect(hex, profile), { bg: false, viewBox: '30 80 340 440' }).replace('<svg ', '<svg preserveAspectRatio="xMidYMin slice" ')}
+        <div class="lab"><span class="badge b-${ev.effect}">${ev.label}</span><small>${ev.score}%</small></div></div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>
