@@ -775,6 +775,30 @@
       </div>
       </div>
     </a>
+    <a href="#landing-menu" class="project-showcase">
+      <div class="showcase-visual pt-visual">
+        <div class="showcase-overlay">
+          <div class="vp-circle">
+            <span data-i="17" class="vp-line">View <span class="vp-arrow">↗</span></span>
+            <span data-i="18" class="vp-line">Project</span>
+          </div>
+        </div>
+      <div class="pt-head">
+        <div class="pt-head-main">
+          <div class="pt-eyebrow"><span class="pt-num">02</span><span data-i="350" class="pt-lab">Landing page</span><i class="pt-line"></i></div>
+          <div data-i="400" class="pt-h">Management Menu Landing Page</div>
+          <p data-i="401" class="pt-d">A landing page for a management menu SaaS product, released with Framer.</p>
+        </div>
+        <div class="pt-meta">
+          <div class="pt-meta-item"><span data-i="22" class="pt-meta-lab">Company</span><span data-i="402" class="pt-meta-val">Client project</span></div>
+          <div class="pt-meta-item"><span data-i="24" class="pt-meta-lab">Industry</span><span class="pt-meta-val">SaaS</span></div>
+        </div>
+      </div>
+      <div class="pt-grid" style="grid-template-columns:minmax(0,1fr);">
+        <div class="pt2-panel" id="lmThumb" style="overflow:hidden;"><div class="lp-shot" aria-hidden="true" style="width:62%; aspect-ratio:4/3; background:transparent;"><div class="lp-bar"><i></i><i></i><i></i></div><div class="lp-page"><b></b><u></u><u class="s"></u><em></em><div class="lp-blocks"><span></span><span></span><span></span></div></div></div></div>
+      </div>
+      </div>
+    </a>
     </div>
   </div>
 </section>
@@ -1089,6 +1113,25 @@
   </div>
 </div>
 
+<div id="landingMenuView" class="project-view" style="display:none;">
+  <div class="pv-topbar wrap"><a data-i="154" href="#top" class="back-link">&larr; Back</a></div>
+  <div class="wrap">
+    <div data-i="341" class="pv-label">Landing page</div>
+    <h1 data-i="400" class="pv-title">Management Menu Landing Page</h1>
+    <div class="pv-grid">
+      <div class="pv-col-main">
+        <div data-i="125" class="pv-meta-label">Overview</div>
+        <p data-i="401" class="pv-text lp-just">A landing page for a management menu SaaS product, released with Framer.</p>
+        <div class="pv-block lp-siterow"><span data-i="392" class="pv-meta-label">Website</span><span data-i="403" class="pv-text">Released with Framer</span></div>
+      </div>
+      <div class="pv-col-side">
+        <div class="pv-block"><div data-i="22" class="pv-meta-label">Company</div><div data-i="402" class="pv-text">Client project</div></div>
+        <div class="pv-block"><div data-i="342" class="pv-meta-label">Industry</div><div class="pv-text">SaaS</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="project2View" class="project-view" style="display:none;">
   <div class="pv-topbar wrap"><a data-i="154" href="#top" class="back-link">&larr; Back</a></div>
   <div class="wrap">
@@ -1349,15 +1392,16 @@
     if(navExp){ navExp.classList.toggle('active', isExp); if(isExp){ navExp.setAttribute('aria-current', 'page'); } else { navExp.removeAttribute('aria-current'); } }
   }
   function route(){
-    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3', isP2 = hash === '#project-2', isLQ = hash === '#landing-qubio';
-    homeView.style.display = (isProject || isExp || isP3 || isP2 || isLQ) ? 'none' : '';
+    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3', isP2 = hash === '#project-2', isLQ = hash === '#landing-qubio', isLM = hash === '#landing-menu';
+    homeView.style.display = (isProject || isExp || isP3 || isP2 || isLQ || isLM) ? 'none' : '';
+    var lmView = document.getElementById('landingMenuView'); if(lmView){ lmView.style.display = isLM ? '' : 'none'; }
     var lqView = document.getElementById('landingQubioView'); if(lqView){ lqView.style.display = isLQ ? '' : 'none'; }
     projectView.style.display = isProject ? '' : 'none';
     if(experienceView){ experienceView.style.display = isExp ? '' : 'none'; }
     if(project3View){ project3View.style.display = isP3 ? '' : 'none'; }
     if(project2View){ project2View.style.display = isP2 ? '' : 'none'; }
     setNav(isExp);
-    if(isProject || isExp || isP3 || isP2 || isLQ){
+    if(isProject || isExp || isP3 || isP2 || isLQ || isLM){
       window.scrollTo(0,0);
     } else {
       var id = location.hash.slice(1);
