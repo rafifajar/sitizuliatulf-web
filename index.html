@@ -358,7 +358,7 @@
   .lp-siterow .pv-meta-label{margin:0;}
   .lp-siterow .xp-link{margin-top:0;}
   .lp-full.lp-full-2{margin:0 0 120px;}
-  #landingQubioView .pv-grid,#landingMenuView .pv-grid{grid-template-columns:minmax(0,1fr) 220px;}
+  #landingQubioView .pv-grid,#landingMenuView .pv-grid,#landingQubiqlView .pv-grid{grid-template-columns:minmax(0,1fr) 220px;}
   .pv-grid + img.lp-full{margin-top:56px;}
   img.lp-full + img.lp-full{margin-top:0;}
   .lp-just{text-align:justify; text-justify:inter-word; word-spacing:-.02em;}
@@ -422,7 +422,7 @@
   footer .socials{display:flex; gap:20px;}
   footer .socials a:hover{color:var(--ink);}
 
-  @media (max-width:720px){ #landingQubioView .pv-grid,#landingMenuView .pv-grid{grid-template-columns:minmax(0,1fr);} .hero{margin:0; border-left:none; border-right:none;} .showcase-visual{grid-template-columns:1fr;} .pv-grid{grid-template-columns:1fr; gap:40px;} .pv-project{grid-template-columns:1fr; gap:40px; margin-top:80px; padding:0;} .pv-sticky{position:static;} .pv-banner + .wrap{padding-top:36px;} .pv-project-media{padding:0;} .pv-project-text{padding-left:0;} .pv-project-02{margin-right:0;} }
+  @media (max-width:720px){ #landingQubioView .pv-grid,#landingMenuView .pv-grid,#landingQubiqlView .pv-grid{grid-template-columns:minmax(0,1fr);} .hero{margin:0; border-left:none; border-right:none;} .showcase-visual{grid-template-columns:1fr;} .pv-grid{grid-template-columns:1fr; gap:40px;} .pv-project{grid-template-columns:1fr; gap:40px; margin-top:80px; padding:0;} .pv-sticky{position:static;} .pv-banner + .wrap{padding-top:36px;} .pv-project-media{padding:0;} .pv-project-text{padding-left:0;} .pv-project-02{margin-right:0;} }
   @media (prefers-reduced-motion:no-preference){
     .profile-row,.hero p.lede,.glance{animation:rise .7s ease both;}
     .hero p.lede{animation-delay:.08s;} .glance{animation-delay:.16s;}
@@ -754,7 +754,7 @@
     </a>
     </div>
     <div class="wk-panel" data-wk-panel="landing" hidden>
-    <a href="#landing-new" class="project-showcase" onclick="return false;">
+    <a href="#landing-qubiql" class="project-showcase">
       <div class="showcase-visual pt-visual">
         <div class="showcase-overlay">
           <div class="vp-circle">
@@ -765,16 +765,16 @@
       <div class="pt-head">
         <div class="pt-head-main">
           <div class="pt-eyebrow"><span class="pt-num">01</span><span data-i="350" class="pt-lab">Landing page</span><i class="pt-line"></i></div>
-          <div data-i="410" class="pt-h">Project name</div>
-          <p data-i="411" class="pt-d">Add a short description of this landing page project here.</p>
+          <div data-i="410" class="pt-h">Landing Page Qubiql</div>
+          <p data-i="411" class="pt-d">Qubiql is an AI-powered productivity app for goal planning, task management, reminders, and user behavior insights to boost daily efficiency</p>
         </div>
         <div class="pt-meta">
-          <div class="pt-meta-item"><span data-i="22" class="pt-meta-lab">Company</span><span data-i="402" class="pt-meta-val">Client project</span></div>
-          <div class="pt-meta-item"><span data-i="24" class="pt-meta-lab">Industry</span><span class="pt-meta-val">Industry</span></div>
+          <div class="pt-meta-item"><span data-i="22" class="pt-meta-lab">Company</span><span class="pt-meta-val">DesktopIP</span></div>
+          <div class="pt-meta-item"><span data-i="24" class="pt-meta-lab">Industry</span><span class="pt-meta-val">AI</span></div>
         </div>
       </div>
       <div class="pt-grid" style="grid-template-columns:minmax(0,1fr);">
-        <div class="pt2-panel" style="overflow:hidden;"><div class="lp-shot" aria-hidden="true" style="width:62%; aspect-ratio:4/3; background:transparent;"><div class="lp-bar"><i></i><i></i><i></i></div><div class="lp-page"><b></b><u></u><u class="s"></u><em></em><div class="lp-blocks"><span></span><span></span><span></span></div></div></div></div>
+        <div class="pt2-panel" style="overflow:hidden;"><img src="qubiql-landing.jpg" width="2400" height="1800" alt="Qubiql landing page: the smarter way to make any goal happen" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 22%;"></div>
       </div>
       </div>
     </a>
@@ -1141,6 +1141,25 @@
   </div>
 </div>
 
+<div id="landingQubiqlView" class="project-view" style="display:none;">
+  <div class="pv-topbar wrap"><a data-i="154" href="#top" class="back-link">&larr; Back</a></div>
+  <div class="wrap">
+    <div data-i="341" class="pv-label">Landing page</div>
+    <h1 data-i="410" class="pv-title">Landing Page Qubiql</h1>
+    <div class="pv-grid">
+      <div class="pv-col-main">
+        <div data-i="125" class="pv-meta-label">Overview</div>
+        <p data-i="411" class="pv-text lp-just">Qubiql is an AI-powered productivity app for goal planning, task management, reminders, and user behavior insights to boost daily efficiency</p>
+      </div>
+      <div class="pv-col-side">
+        <div class="pv-block"><div data-i="22" class="pv-meta-label">Company</div><div class="pv-text">DesktopIP</div></div>
+        <div class="pv-block"><div data-i="342" class="pv-meta-label">Industry</div><div class="pv-text">AI</div></div>
+      </div>
+    </div>
+    <img class="lp-full lp-full-2" src="qubiql-landing.jpg" width="2400" height="1800" alt="Qubiql landing page">
+  </div>
+</div>
+
 <div id="landingMenuView" class="project-view" style="display:none;">
   <div class="pv-topbar wrap"><a data-i="154" href="#top" class="back-link">&larr; Back</a></div>
   <div class="wrap">
@@ -1423,8 +1442,9 @@
     if(navExp){ navExp.classList.toggle('active', isExp); if(isExp){ navExp.setAttribute('aria-current', 'page'); } else { navExp.removeAttribute('aria-current'); } }
   }
   function route(){
-    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3', isP2 = hash === '#project-2', isLQ = hash === '#landing-qubio', isLM = hash === '#landing-menu';
-    homeView.style.display = (isProject || isExp || isP3 || isP2 || isLQ || isLM) ? 'none' : '';
+    var hash = location.hash, isProject = hash === '#project', isExp = hash === '#experience', isP3 = hash === '#project-3', isP2 = hash === '#project-2', isLQ = hash === '#landing-qubio', isLM = hash === '#landing-menu', isLQL = hash === '#landing-qubiql';
+    homeView.style.display = (isProject || isExp || isP3 || isP2 || isLQ || isLM || isLQL) ? 'none' : '';
+    var lqlView = document.getElementById('landingQubiqlView'); if(lqlView){ lqlView.style.display = isLQL ? '' : 'none'; }
     var lmView = document.getElementById('landingMenuView'); if(lmView){ lmView.style.display = isLM ? '' : 'none'; }
     var lqView = document.getElementById('landingQubioView'); if(lqView){ lqView.style.display = isLQ ? '' : 'none'; }
     projectView.style.display = isProject ? '' : 'none';
@@ -1432,7 +1452,7 @@
     if(project3View){ project3View.style.display = isP3 ? '' : 'none'; }
     if(project2View){ project2View.style.display = isP2 ? '' : 'none'; }
     setNav(isExp);
-    if(isProject || isExp || isP3 || isP2 || isLQ || isLM){
+    if(isProject || isExp || isP3 || isP2 || isLQ || isLM || isLQL){
       window.scrollTo(0,0);
     } else {
       var id = location.hash.slice(1);
