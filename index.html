@@ -362,6 +362,11 @@
   .lp-card:hover .lp-visit{color:var(--accent); border-color:var(--accent);}
   @media (max-width:900px){ .lp-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
   @media (max-width:560px){ .lp-grid{grid-template-columns:1fr;} .lp-head{margin-top:56px;} }
+  .tn-pill.wk-tabs{display:inline-flex; margin-bottom:32px; background:rgba(246,246,245,.72); border:1px solid rgba(23,21,18,.08);}
+  .wk-tabs .tn-item{border:0; background:none; cursor:pointer; font-family:inherit; padding:0 20px; font-size:15px; font-weight:600;}
+  .wk-tabs .tn-item.active{background:#fff2ea; color:var(--accent);}
+  .wk-panel[hidden]{display:none;}
+  @media (max-width:640px){ .tn-pill.wk-tabs{display:flex; width:100%; box-sizing:border-box;} .wk-tabs .tn-item{flex:1 1 0; justify-content:center; padding:0 8px; font-size:13px; text-align:center;} }
   .project-showcase + .project-showcase{margin-top:40px;}
   .project-showcase:hover{transform:translateY(-4px);}
   .showcase-visual{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; padding:0; position:relative; aspect-ratio:2.05/1;}
@@ -618,6 +623,11 @@
 <section class="section" id="work">
   <div class="wrap">
     <h2 class="work-title">Project rilis yang dikerjakan</h2>
+    <div class="tn-pill wk-tabs" role="tablist" aria-label="Work">
+      <button class="tn-item active" type="button" role="tab" aria-selected="true" data-wk="cases" data-i="360">Case Studies of Projects</button>
+      <button class="tn-item" type="button" role="tab" aria-selected="false" data-wk="landing" data-i="361">Landing Page</button>
+    </div>
+    <div class="wk-panel" data-wk-panel="cases">
     <a href="#project" class="project-showcase">
       <div class="showcase-visual pt-visual">
         <div class="showcase-overlay">
@@ -695,31 +705,6 @@
       </div>
     </a>
 
-    <a href="#landing-qubio" class="project-showcase">
-      <div class="showcase-visual pt-visual">
-        <div class="showcase-overlay">
-          <div class="vp-circle">
-            <span data-i="17" class="vp-line">View <span class="vp-arrow">↗</span></span>
-            <span data-i="18" class="vp-line">Project</span>
-          </div>
-        </div>
-      <div class="pt-head">
-        <div class="pt-head-main">
-          <div class="pt-eyebrow"><span class="pt-num">03</span><span data-i="350" class="pt-lab">Landing page</span><i class="pt-line"></i></div>
-          <div data-i="351" class="pt-h">Qubio Website Landing Page</div>
-          <p data-i="352" class="pt-d">A marketing landing page that introduces Qubio, the AI assistant for goals and productivity.</p>
-        </div>
-        <div class="pt-meta">
-          <div class="pt-meta-item"><span data-i="22" class="pt-meta-lab">Company</span><span class="pt-meta-val">DesktopIP</span></div>
-          <div class="pt-meta-item"><span data-i="24" class="pt-meta-lab">Industry</span><span data-i="353" class="pt-meta-val">AI Productivity</span></div>
-        </div>
-      </div>
-      <div class="pt-grid" style="grid-template-columns:minmax(0,1fr);">
-        <div class="pt2-panel" style="overflow:hidden;"><img src="qubio-landing.jpg" width="1600" height="1200" alt="Qubio website landing page: home hero, built-in AI and goal creation sections" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center;"></div>
-      </div>
-      </div>
-    </a>
-
     <a href="#project-3" class="project-showcase">
       <div class="showcase-visual pt-visual">
         <div class="showcase-overlay">
@@ -730,7 +715,7 @@
         </div>
         <div class="pt-head">
         <div class="pt-head-main">
-          <div class="pt-eyebrow"><span class="pt-num">04</span><span data-i="39" class="pt-lab">E-commerce app &amp; Supplier web</span><i class="pt-line"></i></div>
+          <div class="pt-eyebrow"><span class="pt-num">03</span><span data-i="39" class="pt-lab">E-commerce app &amp; Supplier web</span><i class="pt-line"></i></div>
           <div data-i="40" class="pt-h">Tokodistributor - Premium Reseller App &amp; TikTok Seller Integration</div>
           <p data-i="41" class="pt-d">Add a short description of this project here.</p>
         </div>
@@ -758,7 +743,33 @@
       </div>
       </div>
     </a>
-
+    </div>
+    <div class="wk-panel" data-wk-panel="landing" hidden>
+    <a href="#landing-qubio" class="project-showcase">
+      <div class="showcase-visual pt-visual">
+        <div class="showcase-overlay">
+          <div class="vp-circle">
+            <span data-i="17" class="vp-line">View <span class="vp-arrow">↗</span></span>
+            <span data-i="18" class="vp-line">Project</span>
+          </div>
+        </div>
+      <div class="pt-head">
+        <div class="pt-head-main">
+          <div class="pt-eyebrow"><span class="pt-num">01</span><span data-i="350" class="pt-lab">Landing page</span><i class="pt-line"></i></div>
+          <div data-i="351" class="pt-h">Qubio Website Landing Page</div>
+          <p data-i="352" class="pt-d">A marketing landing page that introduces Qubio, the AI assistant for goals and productivity.</p>
+        </div>
+        <div class="pt-meta">
+          <div class="pt-meta-item"><span data-i="22" class="pt-meta-lab">Company</span><span class="pt-meta-val">DesktopIP</span></div>
+          <div class="pt-meta-item"><span data-i="24" class="pt-meta-lab">Industry</span><span data-i="353" class="pt-meta-val">AI Productivity</span></div>
+        </div>
+      </div>
+      <div class="pt-grid" style="grid-template-columns:minmax(0,1fr);">
+        <div class="pt2-panel" style="overflow:hidden;"><img src="qubio-landing.jpg" width="1600" height="1200" alt="Qubio website landing page: home hero, built-in AI and goal creation sections" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center;"></div>
+      </div>
+      </div>
+    </a>
+    </div>
   </div>
 </section>
 
@@ -1769,6 +1780,19 @@
   new IntersectionObserver(function(entries, io){
     entries.forEach(function(en){ if(en.isIntersecting && !done){ done = true; run(); io.disconnect(); } });
   }, {threshold:0.6}).observe(box);
+})();
+</script>
+<script>
+(function(){
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.wk-tabs [data-wk]'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('[data-wk-panel]'));
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      var k = t.getAttribute('data-wk');
+      tabs.forEach(function(b){ var on = b === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+      panels.forEach(function(p){ p.hidden = p.getAttribute('data-wk-panel') !== k; });
+    });
+  });
 })();
 </script>
 <script src="i18n.js"></script>
