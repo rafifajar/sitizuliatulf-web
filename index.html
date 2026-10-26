@@ -331,6 +331,32 @@
 
   .work-title{margin:0 0 32px; font-size:clamp(26px,3vw,36px); font-weight:800; line-height:1.15; letter-spacing:-.02em; color:var(--ink);}
   .project-showcase{display:block; text-decoration:none; color:inherit; background:var(--surface); border-radius:24px; overflow:hidden; transition:transform .25s ease;}
+  .lp-head{margin-top:72px;}
+  .lp-title{margin:8px 0 28px; font-size:clamp(22px,2.4vw,28px); font-weight:800; letter-spacing:-.02em; color:var(--ink);}
+  .lp-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px;}
+  .lp-card{display:block; text-decoration:none; color:inherit; transition:transform .25s ease;}
+  .lp-card:hover{transform:translateY(-4px);}
+  .lp-shot{position:relative; aspect-ratio:4/3; border-radius:20px; background:#F1F4FB; overflow:hidden; padding:22px 22px 0;}
+  .lp-bar{display:flex; gap:5px; height:22px; align-items:center; padding:0 10px; border-radius:10px 10px 0 0; background:#fff; border-bottom:1px solid var(--line);}
+  .lp-bar i{width:6px; height:6px; border-radius:50%; background:#d9d9d4;}
+  .lp-page{height:100%; padding:18px 18px 0; background:#fff;}
+  .lp-page b{display:block; width:55%; height:12px; border-radius:6px; background:var(--ink);}
+  .lp-page u{display:block; width:75%; height:6px; margin-top:10px; border-radius:3px; background:#e2e3e8; text-decoration:none;}
+  .lp-page u.s{width:50%;}
+  .lp-page em{display:block; width:64px; height:18px; margin-top:12px; border-radius:99px; background:var(--accent);}
+  .lp-blocks{display:flex; gap:8px; margin-top:16px;}
+  .lp-blocks span{flex:1; height:60px; border-radius:8px; background:#eef1f8;}
+  .lp-mob{position:absolute; right:22px; bottom:0; width:26%; height:62%; padding:12px 9px; box-sizing:border-box; border-radius:16px 16px 0 0; background:#fff; box-shadow:0 0 0 4px #14131a;}
+  .lp-mob b{display:block; width:70%; height:7px; border-radius:4px; background:var(--ink);}
+  .lp-mob u{display:block; width:90%; height:4px; margin-top:7px; border-radius:2px; background:#e2e3e8;}
+  .lp-mob em{display:block; width:36px; height:11px; margin-top:9px; border-radius:99px; background:var(--accent);}
+  .lp-info{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 4px 0;}
+  .lp-name{font-size:17px; font-weight:700; color:var(--ink);}
+  .lp-sub{margin-top:2px; font-size:14px; color:var(--muted);}
+  .lp-visit{flex:none; font-size:14px; font-weight:700; color:var(--ink); border-bottom:1.5px solid rgba(255,90,45,.45); padding-bottom:2px;}
+  .lp-card:hover .lp-visit{color:var(--accent); border-color:var(--accent);}
+  @media (max-width:900px){ .lp-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  @media (max-width:560px){ .lp-grid{grid-template-columns:1fr;} .lp-head{margin-top:56px;} }
   .project-showcase + .project-showcase{margin-top:40px;}
   .project-showcase:hover{transform:translateY(-4px);}
   .showcase-visual{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; padding:0; position:relative; aspect-ratio:2.05/1;}
@@ -702,6 +728,46 @@
       </div>
       </div>
     </a>
+
+    <div class="lp-head">
+      <div data-i="339" class="pv-label">Landing pages</div>
+      <h3 data-i="340" class="lp-title">Released landing pages</h3>
+    </div>
+    <div class="lp-grid">
+      <a class="lp-card" href="#" target="_blank" rel="noopener">
+        <div class="lp-shot" aria-hidden="true">
+          <div class="lp-bar"><i></i><i></i><i></i></div>
+          <div class="lp-page"><b></b><u></u><u class="s"></u><em></em><div class="lp-blocks"><span></span><span></span><span></span></div></div>
+          <div class="lp-mob"><b></b><u></u><em></em></div>
+        </div>
+        <div class="lp-info">
+          <div><div data-i="330" class="lp-name">Project name one</div><div data-i="331" class="lp-sub">Industry &middot; Released 2025</div></div>
+          <span data-i="332" class="lp-visit">Visit <span class="vp-arrow">&#8599;</span></span>
+        </div>
+      </a>
+      <a class="lp-card" href="#" target="_blank" rel="noopener">
+        <div class="lp-shot" aria-hidden="true">
+          <div class="lp-bar"><i></i><i></i><i></i></div>
+          <div class="lp-page"><b></b><u></u><u class="s"></u><em></em><div class="lp-blocks"><span></span><span></span><span></span></div></div>
+          <div class="lp-mob"><b></b><u></u><em></em></div>
+        </div>
+        <div class="lp-info">
+          <div><div data-i="333" class="lp-name">Project name two</div><div data-i="334" class="lp-sub">Industry &middot; Released 2025</div></div>
+          <span data-i="335" class="lp-visit">Visit <span class="vp-arrow">&#8599;</span></span>
+        </div>
+      </a>
+      <a class="lp-card" href="#" target="_blank" rel="noopener">
+        <div class="lp-shot" aria-hidden="true">
+          <div class="lp-bar"><i></i><i></i><i></i></div>
+          <div class="lp-page"><b></b><u></u><u class="s"></u><em></em><div class="lp-blocks"><span></span><span></span><span></span></div></div>
+          <div class="lp-mob"><b></b><u></u><em></em></div>
+        </div>
+        <div class="lp-info">
+          <div><div data-i="336" class="lp-name">Project name three</div><div data-i="337" class="lp-sub">Industry &middot; Released 2025</div></div>
+          <span data-i="338" class="lp-visit">Visit <span class="vp-arrow">&#8599;</span></span>
+        </div>
+      </a>
+    </div>
   </div>
 </section>
 
