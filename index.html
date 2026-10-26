@@ -460,6 +460,11 @@
   .xp-role{margin:0; font-size:clamp(22px,2.4vw,28px); font-weight:800; line-height:1.2; letter-spacing:-.02em; color:var(--ink);}
   .xp-co{display:flex; align-items:center; gap:2px; margin-top:8px; font-size:16px; font-weight:600; color:var(--accent);}
   .xp-desc{margin:16px 0 0; max-width:620px; font-size:17px; line-height:1.7; color:var(--muted);}
+  .xp-title{font-size:clamp(20px,2.2vw,26px); font-weight:700; line-height:1.5; letter-spacing:-.01em; max-width:760px;}
+  .xp-intro{color:var(--ink); max-width:760px;}
+  .xp-points{margin:16px 0 0; padding-left:20px; max-width:620px; font-size:16px; line-height:1.65; color:var(--muted);}
+  .xp-points li{margin:0 0 8px;}
+  .xp-points + .xp-link{margin-top:14px;}
   .xp-link{display:inline-flex; align-items:center; gap:6px; margin-top:18px; font-size:15px; font-weight:700; color:var(--ink); border-bottom:1.5px solid rgba(255,90,45,.45); padding-bottom:2px; transition:color .2s ease, border-color .2s ease;}
   .xp-link:hover{color:var(--accent); border-color:var(--accent);}
   @media (max-width:720px){
@@ -982,32 +987,47 @@
   <div class="pv-topbar wrap"><a data-i="154" href="#top" class="back-link">&larr; Back</a></div>
   <section class="xp wrap">
     <div data-i="2" class="pv-label">Experience</div>
-    <h1 data-i="155" class="xp-title">6 years of designing complex digital products</h1>
-    <p data-i="156" class="xp-intro">Across AI, logistics, e-commerce, and B2B platforms, on web and mobile.</p>
+    <h1 data-i="300" class="xp-title">Hi, I&rsquo;m Siti Zuliatul Faidah, a Product Designer with 6+ years of design experience across full-time roles and client projects. I own complex digital products from research to production across logistics, fintech, e-commerce, and AI.</h1>
+    <p data-i="301" class="xp-intro">I take products from zero to launch and redesign the flows where mistakes are costly. I make decisions from user research and testing, align product, engineering, and business teams around them, and build design systems that keep products consistent. With a background in network engineering, I bring a systems mindset and a shared language with engineers.</p>
     <div class="xp-list">
       <article class="xp-item">
-        <div class="xp-when">2025 &ndash; 2026</div>
+        <div data-i="302" class="xp-when">Dec 2025 &ndash; Present</div>
         <div class="xp-body">
           <h2 class="xp-role">Product Designer</h2>
-          <div data-i="158" class="xp-co">Lion Parcel <i class="dot-sep"></i> Logistics</div>
-          <p data-i="159" class="xp-desc">Designed route visibility, route planning and navigation in the Driver App, and a new Driver Dashboard that separates tasks from information.</p>
+          <div data-i="303" class="xp-co">Lion Parcel <i class="dot-sep"></i> Logistics &amp; Fintech</div>
+          <p data-i="304" class="xp-desc">Designing end-to-end products across First Mile, Last Mile, and internal operations, from research to production.</p>
+          <ul class="xp-points">
+            <li data-i="305">Designed the core shipment booking flow, pickup, and invoice management, from separate domestic and international journeys to corporate billing</li>
+            <li data-i="306">Built an agent pay-later feature from scratch, with 2,500+ shipments booked on credit</li>
+            <li data-i="307">Created a scalable Driver App design system aligned with the new brand identity, and extended it across other internal mobile tools</li>
+          </ul>
           <a class="xp-link" href="#project"><span data-i="160">See the case studies</span> <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
         </div>
       </article>
       <article class="xp-item">
-        <div class="xp-when">20XX &ndash; 20XX</div>
+        <div data-i="308" class="xp-when">[Month Year] &ndash; [Month Year]</div>
         <div class="xp-body">
-          <h2 data-i="162" class="xp-role">Role title</h2>
-          <div data-i="163" class="xp-co">Company name <i class="dot-sep"></i> Industry</div>
-          <p data-i="164" class="xp-desc">Add a short description of your responsibilities and achievements here.</p>
+          <h2 class="xp-role">Product Designer (Sole Designer)</h2>
+          <div data-i="309" class="xp-co">Desktop IP <i class="dot-sep"></i> AI Productivity</div>
+          <p data-i="310" class="xp-desc">Designed Qubio, an AI productivity app on web and mobile, as the only designer, from research to launch.</p>
+          <ul class="xp-points">
+            <li data-i="311">Designed the app and its AI workflows from scratch, including AI analysis and AI-generated responses, reaching 1,000+ users and 50,000+ to-dos</li>
+            <li data-i="312">Ran user testing and onboarding sessions with early users to validate AI experiences and guide design iterations</li>
+            <li data-i="313">Led the rebranding across visual identity, motion, and a scalable design system</li>
+          </ul>
         </div>
       </article>
       <article class="xp-item">
-        <div class="xp-when">20XX &ndash; 20XX</div>
+        <div class="xp-when">2022 &ndash; 2023</div>
         <div class="xp-body">
-          <h2 data-i="162" class="xp-role">Role title</h2>
-          <div data-i="163" class="xp-co">Company name <i class="dot-sep"></i> Industry</div>
-          <p data-i="164" class="xp-desc">Add a short description of your responsibilities and achievements here.</p>
+          <h2 class="xp-role">UI/UX Designer</h2>
+          <div data-i="314" class="xp-co">Tokodistributor <i class="dot-sep"></i> Marketplace</div>
+          <p data-i="315" class="xp-desc">Designed end-to-end experiences for a B2B and B2C marketplace on mobile and web, connecting resellers, suppliers, and operations across transactions, shipping, and third-party integrations.</p>
+          <ul class="xp-points">
+            <li data-i="316">Grew premium reseller sign-ups 20% in the first month (vs. ~5% monthly before) with marketing banners, and designed a voucher system with internal configuration and approval</li>
+            <li data-i="317">Designed supplier tools for product, brand, and stock management, plus reseller payment screens with pay-later</li>
+            <li data-i="318">Built the design system with engineers, aligning tokens between design and code</li>
+          </ul>
         </div>
       </article>
     </div>
